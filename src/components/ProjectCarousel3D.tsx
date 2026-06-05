@@ -10,7 +10,6 @@ interface Project {
   fallbackIcon: string
   status: string
   link: string
-  isPlaceholder?: boolean
 }
 
 const projects: Project[] = [
@@ -30,49 +29,34 @@ const projects: Project[] = [
     status: 'Publicada',
     link: 'https://marketplace.visualstudio.com/items?itemName=b3325c32-f6ee-4fad-9894-9af09cca5946.rdlc-autoheader',
   },
-  {
-    title: 'Próximamente',
-    description: 'Nueva herramienta en desarrollo. Pronto más detalles.',
-    image: '',
-    fallbackIcon: '🔜',
-    status: 'En desarrollo',
-    link: '#proyectos',
-    isPlaceholder: true,
-  },
-  {
-    title: 'Próximamente',
-    description: 'Proyecto en fase inicial de diseño y arquitectura.',
-    image: '',
-    fallbackIcon: '🚀',
-    status: 'Planificación',
-    link: '#proyectos',
-    isPlaceholder: true,
-  },
 ]
 
-const AUTO_SPEED = 0.035 // indices per second (~28s per card, ~114s full loop)
+// Duplicate so the coverflow loop feels continuous
+const loopProjects = [...projects, ...projects]
+
+const AUTO_SPEED = 0.03 // indices per second (~33s per card)
 
 function useResponsiveSpacing() {
-  const [spacing, setSpacing] = useState(200)
+  const [spacing, setSpacing] = useState(240)
   const [rotate, setRotate] = useState(45)
 
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth
       if (w < 400) {
-        setSpacing(105)
+        setSpacing(140)
         setRotate(35)
       } else if (w < 640) {
-        setSpacing(130)
+        setSpacing(170)
         setRotate(40)
       } else if (w < 768) {
-        setSpacing(160)
+        setSpacing(200)
         setRotate(42)
       } else if (w < 1024) {
-        setSpacing(180)
+        setSpacing(220)
         setRotate(45)
       } else {
-        setSpacing(210)
+        setSpacing(260)
         setRotate(48)
       }
     }
@@ -91,13 +75,6 @@ function getShortestOffset(index: number, current: number, count: number) {
   return offset
 }
 
-function ProjectIcon({ src, fallback }: { src: string; fallback: string }) {
-  if (!src) {
-    return <div className="coverflow-card-fallback">{fallback}</div>
-  }
-  return <img src={src} alt="" className="coverflow-card-img" />
-}
-
 function CarouselCard({
   project,
   index,
@@ -111,79 +88,41 @@ function CarouselCard({
   spacing: number
   rotate: number
 }) {
+  const count = loopProjects.length
+
   const x = useTransform(motionCurrent, (v) => {
-    const offset = getShortestOffset(index, v, projects.length)
+    const offset = getShortestOffset(index, v, count)
     return offset * spacing
   })
 
   const rotateY = useTransform(motionCurrent, (v) => {
-    const offset = getShortestOffset(index, v, projects.length)
+    const offset = getShortestOffset(index, v, count)
     return offset * rotate
   })
 
   const scale = useTransform(motionCurrent, (v) => {
-    const offset = Math.abs(getShortestOffset(index, v, projects.length))
-    return offset < 0.5 ? 1 : 0.78
+    const offset = Math.abs(getShortestOffset(index, v, count))
+    return offset < 0.5 ? 1 : 0.72
   })
 
   const opacity = useTransform(motionCurrent, (v) => {
-    const offset = Math.abs(getShortestOffset(index, v, projects.length))
+    const offset = Math.abs(getShortestOffset(index, v, count))
     if (offset < 0.5) return 1
-    if (offset < 1.5) return 0.6
-    return 0.25
+    if (offset < 1.5) return 0.5
+    return 0.2
   })
 
   const filter = useTransform(motionCurrent, (v) => {
-    const offset = Math.abs(getShortestOffset(index, v, projects.length))
-    const blur = offset < 0.5 ? 0 : 3
-    const brightness = offset < 0.5 ? 1 : 0.92
+    const offset = Math.abs(getShortestOffset(index, v, count))
+    const blur = offset < 0.5 ? 0 : 4
+    const brightness = offset < 0.5 ? 1 : 0.9
     return `blur(${blur}px) brightness(${brightness})`
   })
 
   const zIndex = useTransform(motionCurrent, (v) => {
-    const offset = Math.abs(getShortestOffset(index, v, projects.length))
+    const offset = Math.abs(getShortestOffset(index, v, count))
     return 10 - Math.round(offset)
   })
-
-  if (project.isPlaceholder) {
-    return (
-      <motion.div
-        className="coverflow-card coverflow-card-placeholder"
-        style={{
-          x,
-          rotateY,
-          scale,
-          opacity,
-          filter,
-          zIndex,
-          transformStyle: 'preserve-3d',
-        }}
-      >
-        <div className="coverflow-card-inner">
-          <div className="coverflow-card-visual">
-            <div className="coverflow-card-fallback" style={{ display: 'flex' }}>
-              {project.fallbackIcon}
-            </div>
-            <span
-              className="coverflow-card-badge"
-              style={{
-                background: 'rgba(107, 114, 128, 0.1)',
-                color: '#6b7280',
-                borderColor: 'rgba(107, 114, 128, 0.2)',
-              }}
-            >
-              {project.status}
-            </span>
-          </div>
-          <div className="coverflow-card-content">
-            <h3 className="coverflow-card-title">{project.title}</h3>
-            <p className="coverflow-card-desc">{project.description}</p>
-          </div>
-        </div>
-        <div className="coverflow-card-reflection" />
-      </motion.div>
-    )
-  }
 
   return (
     <motion.a
@@ -204,7 +143,10 @@ function CarouselCard({
     >
       <div className="coverflow-card-inner">
         <div className="coverflow-card-visual">
-          <ProjectIcon src={project.image} fallback={project.fallbackIcon} />
+          <img src={project.image} alt="" className="coverflow-card-img" />
+          <div className="coverflow-card-fallback" style={{ display: 'none' }}>
+            {project.fallbackIcon}
+          </div>
           <span className="coverflow-card-badge">{project.status}</span>
         </div>
         <div className="coverflow-card-content">
@@ -299,7 +241,7 @@ export default function ProjectCarousel3D() {
           onDrag={handleDrag}
           onDragEnd={handleDragEnd}
         >
-          {projects.map((project, index) => (
+          {loopProjects.map((project, index) => (
             <CarouselCard
               key={`${project.title}-${index}`}
               project={project}
