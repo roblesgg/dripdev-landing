@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import GlassmorphismBackground from '@/components/GlassmorphismBackground'
+import MeshGradientBackground from '@/components/MeshGradientBackground'
 import AnimatedSection from '@/components/AnimatedSection'
 import { SocialButtons, SocialIcons } from '@/components/SocialLinks'
 
@@ -45,7 +45,7 @@ export default function Home() {
 
   return (
     <main>
-      <GlassmorphismBackground />
+      <MeshGradientBackground />
 
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
@@ -193,57 +193,51 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="fundador" className="section">
+      <section id="autor" className="section">
         <div className="container">
           <AnimatedSection>
-            <h2 className="section-title">Quién hay detrás</h2>
+            <h2 className="section-title">Autor de DripDev</h2>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <p className="section-subtitle">
-              DripDev nace de la mano de una persona con actitud senior y sed de aprender.
+              Información de contacto profesional.
             </p>
           </AnimatedSection>
 
           <div className="about-grid">
             <AnimatedSection delay={0.2} className="about-text">
               <p>
-                Me llamo <span className="about-highlight">Álvaro Robles González</span>, tengo 23
-                años y estoy terminando el Grado Superior en{' '}
-                <strong>Desarrollo de Aplicaciones Multiplataforma</strong>.
+                <span className="about-highlight">Álvaro Robles González</span>, desarrollador de
+                aplicaciones multiplataforma y autor de DripDev.
               </p>
               <p>
-                Aunque me inicio como perfil junior en programación, llevo trabajando desde los 16
-                años. Siete años en hostelería y logística me han enseñado disciplina, trabajo bajo
-                presión y lo que significa que un equipo dependa de ti.
+                Me formé en el Grado Superior en{' '}
+                <strong>Desarrollo de Aplicaciones Multiplataforma</strong> y desarrollo proyectos
+                propios combinando herramientas profesionales con el interés por crear productos
+                útiles y bien construidos.
               </p>
               <p>
-                Dispongo de vehículo propio, carnet de conducir tipo B e incorporación inmediata.
-                Estoy ubicado en <strong>Sangonera la Seca, Murcia</strong>, pero puedo desplazarme
-                sin problema.
-              </p>
-              <p>
-                Me apasiona el orden, las metodologías ágiles y construir código que sea mantenible.
-                No quiero solo &quot;picar código&quot;, sino hacerlo bien.
+                Si quieres ponerte en contacto, puedes escribirme por email o LinkedIn.
               </p>
             </AnimatedSection>
 
             <AnimatedSection delay={0.3}>
               <div className="stats-grid">
                 <div className="stat-card">
-                  <div className="stat-number">23</div>
-                  <div className="stat-label">Años</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">7+</div>
-                  <div className="stat-label">Años trabajando</div>
-                </div>
-                <div className="stat-card">
                   <div className="stat-number">DAM</div>
                   <div className="stat-label">Grado Superior</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-number">B</div>
-                  <div className="stat-label">Carnet + vehículo</div>
+                  <div className="stat-number">Dev</div>
+                  <div className="stat-label">Multiplataforma</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">DripDev</div>
+                  <div className="stat-label">Autor</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">@</div>
+                  <div className="stat-label">Contacto</div>
                 </div>
               </div>
             </AnimatedSection>
