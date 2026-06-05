@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import ParticlesBackground from '@/components/ParticlesBackground'
+import GlassmorphismBackground from '@/components/GlassmorphismBackground'
 import AnimatedSection from '@/components/AnimatedSection'
 import { SocialButtons, SocialIcons } from '@/components/SocialLinks'
 
@@ -45,9 +45,7 @@ export default function Home() {
 
   return (
     <main>
-      <ParticlesBackground />
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
+      <GlassmorphismBackground />
 
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
