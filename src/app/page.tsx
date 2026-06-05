@@ -1,101 +1,245 @@
 'use client'
 
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import SpaceScene from '@/components/SpaceScene'
-import GlassCard from '@/components/GlassCard'
+import ParticlesBackground from '@/components/ParticlesBackground'
+import AnimatedSection from '@/components/AnimatedSection'
+import { SocialButtons, SocialIcons } from '@/components/SocialLinks'
+
+const projects = [
+  {
+    title: 'VeoVeo',
+    description: 'La app definitiva para descubrir películas y hacer match con tus amigos. Decidir qué ver nunca fue tan fácil.',
+    icon: '🍿',
+    status: 'live',
+    statusText: 'En vivo',
+    link: 'https://veoveo.dripdev.dev',
+  },
+  {
+    title: 'DripPay',
+    description: 'Gestión fluida de suscripciones digitales. Controla tus pagos recurrentes desde un solo lugar.',
+    icon: '💳',
+    status: 'soon',
+    statusText: 'Próximamente',
+    link: '#',
+  },
+  {
+    title: 'Studio Cloud',
+    description: 'Espacio creativo colaborativo en la nube. Para equipos que crean contenido juntos.',
+    icon: '☁️',
+    status: 'soon',
+    statusText: 'Próximamente',
+    link: '#',
+  },
+]
+
+const stats = [
+  { number: '3+', label: 'Apps en desarrollo' },
+  { number: '1', label: 'App publicada' },
+  { number: '2+', label: 'Años de experiencia' },
+  { number: '∞', label: 'Ganas de crear' },
+]
 
 export default function Home() {
-  const apps = [
-    {
-      title: 'VeoVeo',
-      description: 'El match definitivo para tus películas y amigos. No pierdas más tiempo eligiendo qué ver.',
-      link: 'https://veoveo.dripdev.dev',
-      icon: '🍿'
-    },
-    {
-      title: 'DripPay',
-      description: 'Próximamente. La forma más fluida de gestionar tus suscripciones digitales.',
-      link: '#',
-      icon: '💳'
-    },
-    {
-      title: 'Studio Cloud',
-      description: 'Próximamente. Tu espacio creativo en la nube para proyectos colaborativos.',
-      link: '#',
-      icon: '☁️'
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
     }
-  ]
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <main>
-      <nav className="nav">
-        <div className="logo">DRIPDEV</div>
-        <div style={{ opacity: 0.5, fontSize: '0.8rem', fontWeight: 600 }}>v1.1</div>
+      <ParticlesBackground />
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        <div className="navbar-inner">
+          <div className="logo">DRIPDEV</div>
+          <div className="nav-links">
+            <SocialIcons />
+          </div>
+        </div>
       </nav>
 
-      <SpaceScene />
-
-      <section className="hero-section">
-        <motion.p 
-          className="tagline"
-          initial={{ opacity: 0, letterSpacing: '1rem' }}
-          whileInView={{ opacity: 1, letterSpacing: '0.3rem' }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+      <section className="hero">
+        <motion.p
+          className="hero-label"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          Celestial Hub
+          Hola, soy
         </motion.p>
-        
+
         <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
+          className="hero-title"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          DripDev
+          <span className="gradient">Álvaro Robles González</span>
         </motion.h1>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          style={{ cursor: 'pointer' }}
-          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+        <motion.p
+          className="hero-subtitle"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <div style={{ fontSize: '1.5rem', marginTop: '20px' }}>↓</div>
+          Desarrollador de aplicaciones móviles y web. Fundador de{' '}
+          <strong style={{ color: 'var(--accent)' }}>DripDev</strong>.
+        </motion.p>
+
+        <motion.div
+          className="hero-cta"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <a href="#proyectos" className="btn btn-primary">
+            Ver proyectos
+          </a>
+          <a href="#contacto" className="btn btn-secondary">
+            Contactar
+          </a>
         </motion.div>
+
+        <SocialButtons />
+
+        <motion.a
+          href="#sobre-mi"
+          className="scroll-hint"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
+        >
+          ↓
+        </motion.a>
       </section>
 
-      <section className="apps-section">
-        <motion.h2
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          Nuestras Apps
-        </motion.h2>
-        
-        <div className="grid-apps">
-          {apps.map((app, i) => (
-            <motion.div
-              key={app.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: i * 0.2 }}
-            >
-              <GlassCard {...app} />
-            </motion.div>
-          ))}
+      <section id="sobre-mi" className="section">
+        <div className="container">
+          <AnimatedSection>
+            <h2 className="section-title">Sobre mí</h2>
+          </AnimatedSection>
+          <AnimatedSection delay={0.1}>
+            <p className="section-subtitle">
+              Apasionado por transformar ideas en aplicaciones reales que la gente use día a día.
+            </p>
+          </AnimatedSection>
+
+          <div className="about-grid">
+            <AnimatedSection delay={0.2} className="about-text">
+              <p>
+                Me llamo <span className="about-highlight">Álvaro Robles González</span> y soy
+                desarrollador de aplicaciones móviles y web. Trabajo principalmente con{' '}
+                <span className="about-highlight">React Native</span>,{' '}
+                <span className="about-highlight">Next.js</span> y{' '}
+                <span className="about-highlight">Firebase</span>.
+              </p>
+              <p>
+                Con <strong>DripDev</strong> quiero crear apps que resuelvan problemas cotidianos
+                de forma sencilla y con buen diseño. Mi primer proyecto público es{' '}
+                <strong>VeoVeo</strong>, una app social para descubrir películas con amigos.
+              </p>
+              <p>
+                Me encanta aprender nuevas tecnologías, iterar rápido y construir productos que
+                aporten valor real.
+              </p>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.3}>
+              <div className="stats-grid">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="stat-card">
+                    <div className="stat-number">{stat.number}</div>
+                    <div className="stat-label">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </AnimatedSection>
+          </div>
         </div>
       </section>
 
-      <footer style={{ 
-        padding: '100px 24px',
-        textAlign: 'center', 
-        color: 'rgba(255,255,255,0.1)',
-        fontSize: '0.7rem',
-        letterSpacing: '2px'
-      }}>
-        © 2026 DRIPDEV STUDIO • CRAFTING DIGITAL GEMS
+      <section id="proyectos" className="section" style={{ background: 'var(--bg-light)' }}>
+        <div className="container">
+          <AnimatedSection>
+            <h2 className="section-title">Proyectos</h2>
+          </AnimatedSection>
+          <AnimatedSection delay={0.1}>
+            <p className="section-subtitle">
+              Estas son las apps y proyectos en los que estoy trabajando actualmente.
+            </p>
+          </AnimatedSection>
+
+          <div className="projects-grid">
+            {projects.map((project, index) => (
+              <AnimatedSection key={project.title} delay={0.2 + index * 0.15}>
+                <a
+                  href={project.link}
+                  target={project.link !== '#' ? '_blank' : undefined}
+                  rel={project.link !== '#' ? 'noopener noreferrer' : undefined}
+                  className="project-card"
+                >
+                  <span className={`project-status status-${project.status}`}>
+                    {project.statusText}
+                  </span>
+                  <div className="project-icon">{project.icon}</div>
+                  <h3>{project.title}</h3>
+                  <p>{project.description}</p>
+                  <span className="project-arrow">
+                    {project.status === 'live' ? 'Visitar' : 'Más info'}
+                    <span>→</span>
+                  </span>
+                </a>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" className="section contact-section">
+        <div className="container">
+          <AnimatedSection>
+            <h2 className="section-title">¿Trabajamos juntos?</h2>
+          </AnimatedSection>
+          <AnimatedSection delay={0.1}>
+            <p className="section-subtitle">
+              Si tienes una idea, quieres colaborar o simplemente charlar sobre tecnología, escríbeme.
+            </p>
+          </AnimatedSection>
+          <AnimatedSection delay={0.2}>
+            <a href="mailto:Alvaro@dripdev.dev" className="contact-email">
+              Alvaro@dripdev.dev
+            </a>
+          </AnimatedSection>
+          <AnimatedSection delay={0.3}>
+            <SocialButtons />
+          </AnimatedSection>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <div className="container">
+          <div className="footer-socials">
+            <a href="https://www.linkedin.com/in/%C3%A1lvaro-robles-gonz%C3%A1lez-bbb017240/" target="_blank" rel="noopener noreferrer" className="footer-link">
+              LinkedIn
+            </a>
+            <a href="https://github.com/roblesgg" target="_blank" rel="noopener noreferrer" className="footer-link">
+              GitHub
+            </a>
+            <a href="mailto:Alvaro@dripdev.dev" className="footer-link">
+              Email
+            </a>
+          </div>
+          <p>© {new Date().getFullYear()} Álvaro Robles González • DripDev</p>
+        </div>
       </footer>
     </main>
   )
