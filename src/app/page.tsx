@@ -53,11 +53,11 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <a href="#proyectos" className="btn btn-primary">
-            Ver proyectos
-          </a>
-          <a href="#contacto" className="btn btn-secondary">
+          <a href="#contacto" className="btn btn-primary">
             Contactar
+          </a>
+          <a href="#dripdev" className="btn btn-secondary">
+            Saber más
           </a>
         </motion.div>
 
@@ -90,13 +90,7 @@ export default function Home() {
                 y desarrollar aplicaciones, extensiones y herramientas digitales con criterio,
                 orden y atención al detalle.
               </p>
-              <p>
-                El objetivo es simple: transformar ideas en productos funcionales. Trabajo con{' '}
-                <span className="about-highlight">React Native</span>,{' '}
-                <span className="about-highlight">Next.js</span> y{' '}
-                <span className="about-highlight">Firebase</span>, priorizando siempre la
-                experiencia de usuario y la calidad del código.
-              </p>
+
               <p>
                 Cada proyecto responde a una necesidad concreta: algo que falta, algo que se puede
                 mejorar, o una idea que merece existir.

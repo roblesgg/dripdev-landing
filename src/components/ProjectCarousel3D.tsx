@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Image from 'next/image'
 
 interface Project {
   title: string
   description: string
   image: string
-  fallbackIcon: string
+  fallbackIcon: React.ReactNode
   status: string
   link: string
 }
@@ -26,7 +26,15 @@ const projects: Project[] = [
     title: 'RDLC Auto Header',
     description: 'Extensión VS Code para automatizar encabezados en informes RDLC.',
     image: '',
-    fallbackIcon: '</>',
+    fallbackIcon: (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+        <polyline points="10 9 9 9 8 9" />
+      </svg>
+    ),
     status: 'Publicada',
     link: 'https://marketplace.visualstudio.com/items?itemName=b3325c32-f6ee-4fad-9894-9af09cca5946.rdlc-autoheader',
   },
@@ -34,114 +42,126 @@ const projects: Project[] = [
 
 export default function ProjectCarousel3D() {
   const [current, setCurrent] = useState(0)
-  const [direction, setDirection] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
 
+  const angleStep = 360 / projects.length
+  const radius = 320
+
   const slideNext = useCallback(() => {
-    setDirection(1)
     setCurrent((prev) => (prev + 1) % projects.length)
   }, [])
 
   const slidePrev = useCallback(() => {
-    setDirection(-1)
     setCurrent((prev) => (prev - 1 + projects.length) % projects.length)
   }, [])
 
-  // Auto-play
   useEffect(() => {
     if (isDragging) return
     const interval = setInterval(() => {
       slideNext()
-    }, 4000)
+    }, 6000)
     return () => clearInterval(interval)
   }, [isDragging, slideNext])
 
   const handleDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
     setIsDragging(false)
-    const threshold = 50
-    if (info.offset.x > threshold || info.velocity.x > 500) {
+    const threshold = 40
+    if (info.offset.x > threshold || info.velocity.x > 300) {
       slidePrev()
-    } else if (info.offset.x < -threshold || info.velocity.x < -500) {
+    } else if (info.offset.x < -threshold || info.velocity.x < -300) {
       slideNext()
     }
   }
 
-  const getCardStyle = (index: number) => {
-    const diff = index - current
-    const angle = diff * 180
-    const isActive = index === current
-
-    return {
-      transform: `rotateY(${angle}deg) translateZ(280px)`,
-      opacity: isActive ? 1 : 0.4,
-      zIndex: isActive ? 10 : 0,
-    }
-  }
-
   return (
-    <div className="carousel-section">
-      <div className="carousel-container">
+    <div className="carousel-section" id="proyectos">
+      <div className="carousel-stage">
         <motion.div
-          className="carousel-track"
+          className="carousel-ring"
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.1}
+          dragElastic={0.05}
           onDragStart={() => setIsDragging(true)}
           onDragEnd={handleDragEnd}
-          animate={{ rotateY: -current * 180 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+          animate={{ rotateY: -current * angleStep }}
+          transition={{
+            type: 'spring',
+            stiffness: 80,
+            damping: 20,
+            mass: 1.2,
+          }}
           style={{ transformStyle: 'preserve-3d' }}
         >
-          <AnimatePresence mode="popLayout" custom={direction}>
-            {projects.map((project, index) => (
-              <motion.a
+          {projects.map((project, index) => {
+            const isActive = index === current
+            const rotation = index * angleStep
+
+            return (
+              <a
                 key={project.title}
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="carousel-card"
-                style={getCardStyle(index)}
-                whileHover={{ scale: index === current ? 1.02 : 1 }}
+                className={`carousel-item ${isActive ? 'active' : ''}`}
+                style={{
+                  transform: `rotateY(${rotation}deg) translateZ(${radius}px)`,
+                }}
               >
-                <div className="carousel-card-inner">
-                  <div className="carousel-card-image">
+                <div className="carousel-item-inner">
+                  <div className="carousel-item-image">
                     {project.image ? (
                       <Image
                         src={project.image}
                         alt={project.title}
-                        width={120}
-                        height={120}
-                        className="carousel-icon"
+                        width={110}
+                        height={110}
+                        className="carousel-item-img"
                       />
                     ) : (
-                      <div className="carousel-fallback-icon">{project.fallbackIcon}</div>
+                      <div className="carousel-item-fallback">{project.fallbackIcon}</div>
                     )}
                   </div>
-                  <span className="carousel-card-status">{project.status}</span>
-                  <h3 className="carousel-card-title">{project.title}</h3>
-                  <p className="carousel-card-desc">{project.description}</p>
-                  <span className="carousel-card-link">
+                  <span className="carousel-item-status">{project.status}</span>
+                  <h3 className="carousel-item-title">{project.title}</h3>
+                  <p className="carousel-item-desc">{project.description}</p>
+                  <span className="carousel-item-cta">
                     Visitar <span>→</span>
                   </span>
                 </div>
-              </motion.a>
-            ))}
-          </AnimatePresence>
+                <div className="carousel-item-reflection" />
+              </a>
+            )
+          })}
         </motion.div>
       </div>
 
-      <div className="carousel-dots">
-        {projects.map((_, index) => (
-          <button
-            key={index}
-            className={`carousel-dot ${index === current ? 'active' : ''}`}
-            onClick={() => {
-              setDirection(index > current ? 1 : -1)
-              setCurrent(index)
-            }}
-            aria-label={`Ir al proyecto ${index + 1}`}
-          />
-        ))}
+      <div className="carousel-floor" />
+
+      <div className="carousel-controls">
+        <button
+          className="carousel-arrow"
+          onClick={slidePrev}
+          aria-label="Proyecto anterior"
+        >
+          ←
+        </button>
+        <div className="carousel-dots">
+          {projects.map((_, index) => (
+            <button
+              key={index}
+              className={`carousel-dot ${index === current ? 'active' : ''}`}
+              onClick={() => setCurrent(index)}
+              aria-label={`Ir al proyecto ${index + 1}`}
+            />
+          ))}
+        </div>
+        <button
+          className="carousel-arrow"
+          onClick={slideNext}
+          aria-label="Proyecto siguiente"
+        >
+          →
+        </button>
       </div>
     </div>
   )
