@@ -16,27 +16,19 @@ const projects = [
     link: 'https://veoveo.dripdev.dev',
   },
   {
-    title: 'DripPay',
-    description: 'Gestión fluida de suscripciones digitales. Controla tus pagos recurrentes desde un solo lugar.',
-    icon: '💳',
-    status: 'soon',
-    statusText: 'Próximamente',
-    link: '#',
-  },
-  {
-    title: 'Studio Cloud',
-    description: 'Espacio creativo colaborativo en la nube. Para equipos que crean contenido juntos.',
-    icon: '☁️',
-    status: 'soon',
-    statusText: 'Próximamente',
-    link: '#',
+    title: 'RDLC Auto Header',
+    description: 'Extensión de Visual Studio Code para automatizar encabezados en informes RDLC. Ahorra tiempo en cada reporte.',
+    icon: '🧩',
+    status: 'live',
+    statusText: 'Publicada',
+    link: 'https://marketplace.visualstudio.com/items?itemName=b3325c32-f6ee-4fad-9894-9af09cca5946.rdlc-autoheader',
   },
 ]
 
 const stats = [
-  { number: '3+', label: 'Apps en desarrollo' },
+  { number: '2+', label: 'Proyectos públicos' },
   { number: '1', label: 'App publicada' },
-  { number: '2+', label: 'Años de experiencia' },
+  { number: '1', label: 'Extensión VS Code' },
   { number: '∞', label: 'Ganas de crear' },
 ]
 
