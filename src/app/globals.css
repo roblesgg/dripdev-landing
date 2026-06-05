@@ -485,17 +485,20 @@ main {
   perspective: 1200px;
   overflow: visible;
   padding-top: 30px;
+  margin: 0 auto;
 }
 
 .coverflow-track {
   position: relative;
   width: 360px;
   height: 460px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: grab;
   transform-style: preserve-3d;
+  left: 0;
 }
 
 .coverflow-track:active {

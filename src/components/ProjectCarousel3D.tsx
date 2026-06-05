@@ -31,32 +31,32 @@ const projects: Project[] = [
   },
 ]
 
-// Duplicate so the coverflow loop feels continuous
+// Duplicate for continuous looping
 const loopProjects = [...projects, ...projects]
 
-const AUTO_SPEED = 0.03 // indices per second (~33s per card)
+const AUTO_SPEED = 0.025 // indices per second (~40s per card)
 
 function useResponsiveSpacing() {
-  const [spacing, setSpacing] = useState(240)
+  const [spacing, setSpacing] = useState(300)
   const [rotate, setRotate] = useState(45)
 
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth
       if (w < 400) {
-        setSpacing(140)
+        setSpacing(170)
         setRotate(35)
       } else if (w < 640) {
-        setSpacing(170)
+        setSpacing(220)
         setRotate(40)
       } else if (w < 768) {
-        setSpacing(200)
+        setSpacing(280)
         setRotate(42)
       } else if (w < 1024) {
-        setSpacing(220)
+        setSpacing(340)
         setRotate(45)
       } else {
-        setSpacing(260)
+        setSpacing(400)
         setRotate(48)
       }
     }
@@ -102,13 +102,13 @@ function CarouselCard({
 
   const scale = useTransform(motionCurrent, (v) => {
     const offset = Math.abs(getShortestOffset(index, v, count))
-    return offset < 0.5 ? 1 : 0.72
+    return offset < 0.5 ? 1 : 0.65
   })
 
   const opacity = useTransform(motionCurrent, (v) => {
     const offset = Math.abs(getShortestOffset(index, v, count))
     if (offset < 0.5) return 1
-    if (offset < 1.5) return 0.5
+    if (offset < 1.5) return 0.45
     return 0.2
   })
 
@@ -163,8 +163,9 @@ function CarouselCard({
 }
 
 export default function ProjectCarousel3D() {
-  const motionCurrent = useMotionValue(0)
-  const [activeIndex, setActiveIndex] = useState(0)
+  // Start at 0.5 so 4 duplicated cards distribute symmetrically around center
+  const motionCurrent = useMotionValue(0.5)
+  const [activeIndex, setActiveIndex] = useState(1) // RDLC is at loop index 1 when current=0.5
   const [isDragging, setIsDragging] = useState(false)
   const dragStartValue = useRef<number | null>(null)
   const { spacing, rotate } = useResponsiveSpacing()
@@ -185,9 +186,9 @@ export default function ProjectCarousel3D() {
     raf = requestAnimationFrame(tick)
 
     const unsubscribe = motionCurrent.on('change', (v) => {
-      const idx = Math.round(v)
-      const normalized = ((idx % projects.length) + projects.length) % projects.length
-      setActiveIndex(normalized)
+      const idx = Math.floor(v + 0.5)
+      const loopIdx = ((idx % loopProjects.length) + loopProjects.length) % loopProjects.length
+      setActiveIndex(loopIdx % projects.length)
     })
 
     return () => {
@@ -214,8 +215,9 @@ export default function ProjectCarousel3D() {
 
   const goTo = (index: number) => {
     const current = motionCurrent.get()
-    const currentNormalized = ((Math.round(current) % projects.length) + projects.length) % projects.length
-    let diff = index - currentNormalized
+    const currentLoopIdx = Math.floor(current + 0.5) % loopProjects.length
+    const currentProjectIdx = currentLoopIdx % projects.length
+    let diff = index - currentProjectIdx
     if (diff > projects.length / 2) diff -= projects.length
     if (diff < -projects.length / 2) diff += projects.length
     motionCurrent.set(current + diff)
