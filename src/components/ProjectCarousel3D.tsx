@@ -19,7 +19,7 @@ const projects: Project[] = [
     image: '/veoveo-icon.png',
     fallbackIcon: '🍿',
     status: 'En vivo',
-    link: 'https://veoveo.dripdev.dev',
+    link: 'https://veoveo.dripdev.dev/descargar',
   },
   {
     title: 'RDLC Auto Header',
