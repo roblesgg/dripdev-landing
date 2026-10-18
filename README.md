@@ -30,7 +30,9 @@ Opcional: define `GITHUB_TOKEN` (solo lectura) para subir el límite de la API d
 
 ## Hecho con
 
-Next.js 16 y React 19, Motion para las animaciones, Phosphor para los iconos y Geist (texto y datos). Tema oscuro fijo. Publicada en Vercel: cada fusión a `main` se despliega sola.
+Next.js 16 y React 19. La portada es una escena 3D con Three.js (React Three Fiber): un cinturón de asteroides por el que viaja la cámara al hacer scroll y el logo hecho de 70.000 partículas. Motion para las animaciones de la página, Phosphor para los iconos y Geist (texto y datos). Tema oscuro fijo. Publicada en Vercel: cada fusión a `main` se despliega sola.
+
+La escena se adapta al dispositivo: en móvil usa menos asteroides y puntos y no aplica postprocesado; con `prefers-reduced-motion` se dibuja una sola vez, sin movimiento; sin WebGL, la página se lee igual sobre un fondo estático. El logo se convierte en nube de puntos con `node scripts/generar-logo-puntos.mjs`.
 
 <details>
 <summary><b>Para desarrollar</b></summary>

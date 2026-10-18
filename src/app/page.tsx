@@ -1,5 +1,6 @@
 import { ArrowUpRight, GithubLogo, LinkedinLogo } from '@phosphor-icons/react/dist/ssr'
 import { Nav } from '@/components/Nav'
+import { Escena } from '@/components/Escena'
 import { Actividad } from '@/components/Actividad'
 import { FilaProyecto } from '@/components/FilaProyecto'
 import { Reveal } from '@/components/Reveal'
@@ -23,11 +24,12 @@ export default async function Home() {
   return (
     <>
       <a className="skip" href="#proyectos">Saltar al contenido</a>
+      <Escena />
       <Nav />
 
       <main>
         <section className="hero" aria-labelledby="titulo-hero">
-          <div className={`contenedor hero-rejilla${hayActividad ? '' : ' sin-actividad'}`}>
+          <div className="contenedor">
             <div>
               <Reveal>
                 <h1 id="titulo-hero">Construyo las apps que uso.</h1>
@@ -54,13 +56,22 @@ export default async function Home() {
               </Reveal>
             </div>
 
-            {hayActividad && (
-              <Reveal delay={0.24}>
-                <Actividad commits={commits} />
-              </Reveal>
-            )}
           </div>
         </section>
+
+        {hayActividad && (
+          <section id="actividad" className="seccion seccion-corta" aria-labelledby="titulo-actividad">
+            <div className="contenedor">
+              <Reveal>
+                <h2 id="titulo-actividad" className="seccion-titulo">Lo último que he hecho</h2>
+                <p className="seccion-intro">Commits reales de mis repositorios públicos, tal como salen de GitHub.</p>
+              </Reveal>
+              <Reveal delay={0.06} className="actividad-envoltorio">
+                <Actividad commits={commits} />
+              </Reveal>
+            </div>
+          </section>
+        )}
 
         <section id="proyectos" className="seccion" aria-labelledby="titulo-proyectos">
           <div className="contenedor">
@@ -73,7 +84,7 @@ export default async function Home() {
 
             <div className="grupos">
               {gruposEstado.map(({ estado, titulo, nota }) => (
-                <Reveal key={estado}>
+                <Reveal key={estado} className="panel">
                   <h3 className="grupo-titulo">{titulo}</h3>
                   <p className="grupo-nota">{nota}</p>
                   <div className="filas" role="list">
@@ -99,8 +110,8 @@ export default async function Home() {
             <Reveal>
               <h2 id="titulo-stack" className="seccion-titulo">Con qué lo construyo</h2>
             </Reveal>
-            <Reveal delay={0.05}>
-              <dl className="stack">
+            <Reveal delay={0.05} className="panel" >
+              <dl className="stack" style={{ marginTop: 0 }}>
                 {stack.map(({ area, items }) => (
                   <div key={area}>
                     <dt>{area}</dt>
@@ -113,7 +124,7 @@ export default async function Home() {
         </section>
 
         <section id="contacto" className="seccion" aria-labelledby="titulo-contacto">
-          <div className="contenedor contacto">
+          <div className="contenedor contacto panel">
             <Reveal className="persona">
               <img src="/alvaro.jpeg" alt="Álvaro Robles" width={132} height={132} loading="lazy" />
               <p className="persona-nombre">Álvaro Robles González</p>
