@@ -1,205 +1,157 @@
-'use client'
+import { ArrowUpRight, GithubLogo, LinkedinLogo } from '@phosphor-icons/react/dist/ssr'
+import { Nav } from '@/components/Nav'
+import { Actividad } from '@/components/Actividad'
+import { FilaProyecto } from '@/components/FilaProyecto'
+import { Reveal } from '@/components/Reveal'
+import { actividadReciente, datosDeRepo, fechaCorta } from '@/lib/github'
+import { gruposEstado, proyectos, stack } from '@/lib/proyectos'
 
-import { motion } from 'framer-motion'
-import { useState, useCallback } from 'react'
-import dynamic from 'next/dynamic'
-import ProjectCarousel3D from '@/components/ProjectCarousel3D'
-import MeshGradientBackground from '@/components/MeshGradientBackground'
-import AnimatedSection from '@/components/AnimatedSection'
-import { SocialButtons } from '@/components/SocialLinks'
-import { IconEnUso, IconChispa, IconCommits, IconUbicacion } from '@/components/Icons'
+// Datos de GitHub: se recalculan como mucho una vez por hora.
+export const revalidate = 3600
 
-const EasterEggJet = dynamic(() => import('@/components/EasterEggJet'), { ssr: false })
+const CORREO = 'Roblesgg16@gmail.com'
 
-const features = [
-  {
-    Icon: IconEnUso,
-    title: 'Las uso yo',
-    desc: 'Split lleva mis cuentas e imputa.me mis horas de trabajo. Si algo falla, lo noto yo primero.',
-  },
-  {
-    Icon: IconChispa,
-    title: 'De la idea al móvil',
-    desc: 'Sin reuniones ni fases. Lo que hoy es un problema, en unos días es una app instalada.',
-  },
-  {
-    Icon: IconCommits,
-    title: 'No las abandono',
-    desc: 'Siguen cambiando después de publicarse. El historial de commits está a la vista.',
-  },
-]
+export default async function Home() {
+  const [commits, datos] = await Promise.all([
+    actividadReciente(6),
+    Promise.all(proyectos.map((p) => (p.repo && p.estado !== 'proximamente' ? datosDeRepo(p.repo) : null))),
+  ])
 
-const LETTERS = 'DripDev'.split('')
-
-export default function Home() {
-  const [exploded] = useState(false)
-  const [showLogo, setShowLogo] = useState(false)
-  const handleImpact = useCallback(() => {
-    // The jet leaves a cloud of smoke over the title; swap the text for the
-    // logo behind it so it's revealed when the smoke clears.
-    setTimeout(() => setShowLogo(true), 750)
-  }, [])
+  // Con menos de tres commits el panel parece vacío: mejor no enseñarlo.
+  const hayActividad = !!commits && commits.length >= 3
 
   return (
-    <main>
-      <MeshGradientBackground />
+    <>
+      <a className="skip" href="#proyectos">Saltar al contenido</a>
+      <Nav />
 
-      {/* ── Navbar ── */}
-      <nav className="navbar">
-        <div className="lg-effect" />
-        <div className="lg-tint" />
-        <div className="lg-shine" />
-        <div className="navbar-inner">
-          <button
-            className="logo"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            aria-label="Volver arriba"
-          >
-            DRIPDEV
-          </button>
-          <nav className="nav-links">
-            <a href="#dripdev">Sobre mí</a>
-            <a href="#contacto">Contacto</a>
-          </nav>
-        </div>
-      </nav>
-
-      {/* ── Hero ── */}
-      <section className="hero" style={{ minHeight: 'auto', paddingBottom: '0' }}>
-
-        <motion.div
-          className="hero-badge"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <span className="hero-badge-dot" />
-          Apps Android · Web · Escritorio
-        </motion.div>
-
-        <motion.h1
-          className={`hero-title${exploded ? ' exploded' : ''}`}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25 }}
-        >
-          {showLogo ? (
-            <motion.img
-              src="/dripdev-logo.png"
-              alt="DripDev"
-              className="hero-logo"
-              initial={{ opacity: 0, scale: 0.3, rotate: -15 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 140, damping: 12 }}
-            />
-          ) : (
-            <span className="gradient">
-              {LETTERS.map((char, i) => (
-                <span key={i} className="letter" style={{ '--i': i } as React.CSSProperties}>
-                  {char}
-                </span>
-              ))}
-            </span>
-          )}
-        </motion.h1>
-
-        <motion.p
-          className="hero-subtitle"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          Hago las aplicaciones que yo quería tener. Si me sirven a mí, puede que te sirvan a ti.
-        </motion.p>
-
-        <motion.div
-          className="hero-cta"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.55 }}
-        >
-          <a href="#contacto" className="btn btn-primary">Escríbeme</a>
-          <a href="#dripdev" className="btn btn-secondary">Ver proyectos</a>
-        </motion.div>
-
-        <ProjectCarousel3D />
-
-        <motion.a
-          href="#dripdev"
-          className="scroll-hint"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.8 }}
-        >↓</motion.a>
-      </section>
-
-      {/* ── Qué es DripDev ── */}
-      <section id="dripdev" className="section">
-        <div className="container">
-          <AnimatedSection>
-            <h2 className="section-title">Qué es DripDev</h2>
-          </AnimatedSection>
-          <AnimatedSection delay={0.1}>
-            <p className="section-subtitle">
-              La marca con la que publico lo que desarrollo por mi cuenta: apps para Android,
-              webs y herramientas de escritorio.
-            </p>
-          </AnimatedSection>
-
-          <div className="feature-grid">
-            {features.map(({ Icon, title, desc }, i) => (
-              <AnimatedSection key={title} delay={i * 0.12}>
-                <div className="feature-card">
-                  <div className="lg-effect" />
-                  <div className="lg-tint" />
-                  <div className="lg-shine" />
-                  <div className="feature-card-inner">
-                    <Icon className="feature-icon" />
-                    <h3>{title}</h3>
-                    <p>{desc}</p>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Contacto ── */}
-      <section id="contacto" className="section contact-section">
-        <div className="container">
-          <AnimatedSection>
-            <div className="contact-card">
-              <div className="lg-effect" />
-              <div className="lg-tint" style={{ background: 'linear-gradient(155deg, rgba(251,148,78,0.10) 0%, rgba(143,114,235,0.08) 38%, rgba(21,18,28,0.82) 72%)' }} />
-              <div className="lg-shine" />
-              <div className="contact-card-inner">
-                <div className="contact-avatar">
-                  <img src="/alvaro.jpeg" alt="Álvaro Robles" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                </div>
-                <h2 className="contact-name">Álvaro Robles González</h2>
-                <p className="contact-role">Desarrollador de aplicaciones multiplataforma</p>
-                <a href="mailto:Roblesgg16@gmail.com" className="contact-email">
-                  Roblesgg16@gmail.com
-                </a>
-                <p className="contact-location">
-                  <IconUbicacion className="contact-location-icon" />
-                  Murcia
+      <main>
+        <section className="hero" aria-labelledby="titulo-hero">
+          <div className={`contenedor hero-rejilla${hayActividad ? '' : ' sin-actividad'}`}>
+            <div>
+              <Reveal>
+                <h1 id="titulo-hero">Construyo las apps que uso.</h1>
+              </Reveal>
+              <Reveal delay={0.08}>
+                <p className="hero-sub">
+                  DripDev es mi estudio independiente: apps para Android, web y escritorio, publicadas y
+                  mantenidas por mí.
                 </p>
-                <SocialButtons />
-              </div>
+              </Reveal>
+              <Reveal delay={0.16}>
+                <div className="hero-acciones">
+                  <a className="boton boton-primario" href="#proyectos">Ver proyectos</a>
+                  <a
+                    className="boton boton-secundario"
+                    href="https://github.com/roblesgg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub
+                    <ArrowUpRight size={16} weight="regular" aria-hidden />
+                  </a>
+                </div>
+              </Reveal>
             </div>
-          </AnimatedSection>
-        </div>
-      </section>
 
-      <EasterEggJet onImpact={handleImpact} />
+            {hayActividad && (
+              <Reveal delay={0.24}>
+                <Actividad commits={commits} />
+              </Reveal>
+            )}
+          </div>
+        </section>
 
-      <footer className="footer">
-        <div className="container">
-          <p>© {new Date().getFullYear()} DripDev · Álvaro Robles González</p>
+        <section id="proyectos" className="seccion" aria-labelledby="titulo-proyectos">
+          <div className="contenedor">
+            <Reveal>
+              <h2 id="titulo-proyectos" className="seccion-titulo">Proyectos</h2>
+              <p className="seccion-intro">
+                Lo que ya se puede usar, lo que sigue en beta y lo que está por llegar.
+              </p>
+            </Reveal>
+
+            <div className="grupos">
+              {gruposEstado.map(({ estado, titulo, nota }) => (
+                <Reveal key={estado}>
+                  <h3 className="grupo-titulo">{titulo}</h3>
+                  <p className="grupo-nota">{nota}</p>
+                  <div className="filas" role="list">
+                    {proyectos.map((p, i) =>
+                      p.estado !== estado ? null : (
+                        <FilaProyecto
+                          key={p.id}
+                          proyecto={p}
+                          version={datos[i]?.version ?? null}
+                          fechaVersion={datos[i]?.fechaVersion ? fechaCorta(datos[i]!.fechaVersion!) : null}
+                        />
+                      ),
+                    )}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="stack" className="seccion" aria-labelledby="titulo-stack">
+          <div className="contenedor">
+            <Reveal>
+              <h2 id="titulo-stack" className="seccion-titulo">Con qué lo construyo</h2>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <dl className="stack">
+                {stack.map(({ area, items }) => (
+                  <div key={area}>
+                    <dt>{area}</dt>
+                    <dd>{items}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
+        </section>
+
+        <section id="contacto" className="seccion" aria-labelledby="titulo-contacto">
+          <div className="contenedor contacto">
+            <Reveal className="persona">
+              <img src="/alvaro.jpeg" alt="Álvaro Robles" width={132} height={132} loading="lazy" />
+              <p className="persona-nombre">Álvaro Robles González</p>
+              <p className="persona-cargo">Desarrollador de aplicaciones multiplataforma</p>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <h2 id="titulo-contacto" className="seccion-titulo">Sobre mí</h2>
+              <p className="contacto-texto" style={{ marginTop: 16 }}>
+                Soy <strong>Álvaro</strong>, de Murcia. Desarrollo y mantengo estos proyectos por mi cuenta.
+                Si tienes una idea, has encontrado un fallo o quieres probar alguna de las apps, escríbeme.
+              </p>
+              <a className="contacto-correo" href={`mailto:${CORREO}`}>{CORREO}</a>
+              <div className="contacto-enlaces">
+                <a href="https://github.com/roblesgg" target="_blank" rel="noopener noreferrer">
+                  <GithubLogo size={18} aria-hidden />
+                  GitHub
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/%C3%A1lvaro-robles-gonz%C3%A1lez-bbb017240/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <LinkedinLogo size={18} aria-hidden />
+                  LinkedIn
+                </a>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </main>
+
+      <footer className="pie">
+        <div className="contenedor pie-dentro">
+          <span>© {new Date().getFullYear()} DripDev. Álvaro Robles González.</span>
+          <span>Murcia, España</span>
         </div>
       </footer>
-    </main>
+    </>
   )
 }

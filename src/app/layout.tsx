@@ -1,49 +1,41 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
+const sans = Geist({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const mono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' })
+
+const titulo = 'DripDev | Apps independientes de Álvaro Robles'
+const descripcion =
+  'DripDev es el estudio independiente de Álvaro Robles: apps para Android, web y escritorio. VeoVeo, split, imputa.me, Zona Cliente y RDLC Auto Header.'
+
 export const metadata: Metadata = {
-  title: 'DripDev | Desarrollos creativos y eficaces',
-  description: 'Marca personal de desarrollo de aplicaciones y herramientas digitales. Creador de VeoVeo, Zona Cliente, RDLC Auto Header y más proyectos.',
-  keywords: ['DripDev', 'Álvaro Robles González', 'VeoVeo', 'Zona Cliente', 'CRM', 'desarrollador apps', 'React Native', 'Next.js', 'RDLC Auto Header'],
-  authors: [{ name: 'Álvaro Robles González' }],
-  icons: {
-    icon: '/dripdev-logo.png',
-    shortcut: '/dripdev-logo.png',
-    apple: '/dripdev-logo.png',
-  },
+  metadataBase: new URL('https://dripdev.dev'),
+  title: titulo,
+  description: descripcion,
+  authors: [{ name: 'Álvaro Robles González', url: 'https://github.com/roblesgg' }],
+  alternates: { canonical: '/' },
+  icons: { icon: '/dripdev-logo.png', apple: '/dripdev-logo.png' },
   openGraph: {
-    title: 'DripDev | Desarrollos creativos y eficaces',
-    description: 'Marca personal de desarrollo de aplicaciones y herramientas digitales.',
+    title: titulo,
+    description: descripcion,
+    url: 'https://dripdev.dev',
+    siteName: 'DripDev',
+    locale: 'es_ES',
     type: 'website',
   },
+  twitter: { card: 'summary_large_image', title: titulo, description: descripcion },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const viewport: Viewport = {
+  themeColor: '#0e0c12',
+  colorScheme: 'dark',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body>
-        {children}
-        <svg style={{ display: 'none' }} aria-hidden="true">
-          <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
-            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="1" seed="5" result="turbulence" />
-            <feComponentTransfer in="turbulence" result="mapped">
-              <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
-              <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
-              <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
-            </feComponentTransfer>
-            <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap" />
-            <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lightingColor="white" result="specLight">
-              <fePointLight x="-200" y="-200" z="300" />
-            </feSpecularLighting>
-            <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage" />
-            <feDisplacementMap in="SourceGraphic" in2="softMap" scale="55" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-        </svg>
-      </body>
+    <html lang="es" className={`${sans.variable} ${mono.variable}`}>
+      <body>{children}</body>
     </html>
   )
 }
