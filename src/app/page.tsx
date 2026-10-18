@@ -7,20 +7,26 @@ import ProjectCarousel3D from '@/components/ProjectCarousel3D'
 import MeshGradientBackground from '@/components/MeshGradientBackground'
 import AnimatedSection from '@/components/AnimatedSection'
 import { SocialButtons } from '@/components/SocialLinks'
+import { IconEnUso, IconChispa, IconCommits, IconUbicacion } from '@/components/Icons'
 
 const EasterEggJet = dynamic(() => import('@/components/EasterEggJet'), { ssr: false })
 
 const features = [
-  { icon: '🎯', title: 'Criterio', desc: 'Cada proyecto resuelve una necesidad real, sin relleno.' },
-  { icon: '⚡', title: 'Velocidad', desc: 'Desde idea hasta build funcional en el menor tiempo posible.' },
-  { icon: '∞', title: 'Continuidad', desc: 'Mantenimiento activo y mejoras constantes tras el lanzamiento.' },
-]
-
-const stats = [
-  { number: '4', label: 'Proyectos públicos' },
-  { number: '3', label: 'Apps publicadas' },
-  { number: '1', label: 'Extensión VS Code' },
-  { number: '∞', label: 'En desarrollo' },
+  {
+    Icon: IconEnUso,
+    title: 'Las uso yo',
+    desc: 'Split lleva mis cuentas e imputa.me mis horas de trabajo. Si algo falla, lo noto yo primero.',
+  },
+  {
+    Icon: IconChispa,
+    title: 'De la idea al móvil',
+    desc: 'Sin reuniones ni fases. Lo que hoy es un problema, en unos días es una app instalada.',
+  },
+  {
+    Icon: IconCommits,
+    title: 'No las abandono',
+    desc: 'Siguen cambiando después de publicarse. El historial de commits está a la vista.',
+  },
 ]
 
 const LETTERS = 'DripDev'.split('')
@@ -59,7 +65,7 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="hero" style={{ minHeight: 'auto', paddingBottom: '20px' }}>
+      <section className="hero" style={{ minHeight: 'auto', paddingBottom: '0' }}>
 
         <motion.div
           className="hero-badge"
@@ -68,7 +74,7 @@ export default function Home() {
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <span className="hero-badge-dot" />
-          Apps · Extensiones · Herramientas
+          Apps Android · Web · Escritorio
         </motion.div>
 
         <motion.h1
@@ -103,7 +109,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          Desarrollos creativos y eficaces.
+          Hago las aplicaciones que yo quería tener. Si me sirven a mí, puede que te sirvan a ti.
         </motion.p>
 
         <motion.div
@@ -112,8 +118,8 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.55 }}
         >
-          <a href="#contacto" className="btn btn-primary">Contactar</a>
-          <a href="#dripdev" className="btn btn-secondary">Saber más</a>
+          <a href="#contacto" className="btn btn-primary">Escríbeme</a>
+          <a href="#dripdev" className="btn btn-secondary">Ver proyectos</a>
         </motion.div>
 
         <ProjectCarousel3D />
@@ -135,33 +141,23 @@ export default function Home() {
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <p className="section-subtitle">
-              Marca personal de desarrollo de aplicaciones y herramientas digitales.
+              La marca con la que publico lo que desarrollo por mi cuenta: apps para Android,
+              webs y herramientas de escritorio.
             </p>
           </AnimatedSection>
 
           <div className="feature-grid">
-            {features.map((f, i) => (
-              <AnimatedSection key={f.title} delay={i * 0.12}>
+            {features.map(({ Icon, title, desc }, i) => (
+              <AnimatedSection key={title} delay={i * 0.12}>
                 <div className="feature-card">
                   <div className="lg-effect" />
                   <div className="lg-tint" />
                   <div className="lg-shine" />
                   <div className="feature-card-inner">
-                    <div className="feature-icon">{f.icon}</div>
-                    <h3>{f.title}</h3>
-                    <p>{f.desc}</p>
+                    <Icon className="feature-icon" />
+                    <h3>{title}</h3>
+                    <p>{desc}</p>
                   </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-
-          <div className="stats-row">
-            {stats.map((s, i) => (
-              <AnimatedSection key={s.label} delay={0.3 + i * 0.08}>
-                <div className="stat-card">
-                  <div className="stat-number">{s.number}</div>
-                  <div className="stat-label">{s.label}</div>
                 </div>
               </AnimatedSection>
             ))}
@@ -186,7 +182,10 @@ export default function Home() {
                 <a href="mailto:Roblesgg16@gmail.com" className="contact-email">
                   Roblesgg16@gmail.com
                 </a>
-                <p className="contact-location">📍 Murcia</p>
+                <p className="contact-location">
+                  <IconUbicacion className="contact-location-icon" />
+                  Murcia
+                </p>
                 <SocialButtons />
               </div>
             </div>

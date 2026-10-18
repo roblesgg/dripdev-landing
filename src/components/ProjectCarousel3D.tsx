@@ -16,12 +16,30 @@ interface Project {
 const projects: Project[] = [
   {
     title: 'VeoVeo',
-    description: 'App social para descubrir películas y hacer match con amigos.',
+    description: 'Descubre pelis, guarda tu lista y decidid en un minuto qué ver juntos.',
     image: '/veoveo-icon.png',
     status: 'En vivo',
     statusType: 'live',
     link: 'https://veoveo.dripdev.dev/descargar',
-    accent: '#6366f1',
+    accent: '#38BDF8',
+  },
+  {
+    title: 'split',
+    description: 'Tus cuentas, gastos, ahorro y pagos programados. Sin registro y sin nube: los datos se quedan en tu móvil.',
+    image: '/split-icon.png',
+    status: 'En vivo',
+    statusType: 'live',
+    link: 'https://github.com/roblesgg/split/releases/latest',
+    accent: '#22C55E',
+  },
+  {
+    title: 'imputa.me',
+    description: 'Registra tus horas por tarea y míralas en un calendario semanal. Vive en la bandeja del sistema.',
+    image: '/imputame-icon.png',
+    status: 'En vivo',
+    statusType: 'live',
+    link: 'https://imputame.dripdev.dev/descargar',
+    accent: '#FB944E',
   },
   {
     title: 'Zona Cliente',
@@ -30,25 +48,16 @@ const projects: Project[] = [
     status: 'En vivo',
     statusType: 'live',
     link: 'https://zonacliente.dripdev.dev/descargar',
-    accent: '#1d4ed8',
-  },
-  {
-    title: 'imputa.me',
-    description: 'App de escritorio para registrar tus horas por tarea y consultarlas en un calendario semanal. Vive en la bandeja del sistema.',
-    image: '/imputame-icon.png',
-    status: 'En vivo',
-    statusType: 'live',
-    link: 'https://imputame.dripdev.dev/descargar',
-    accent: '#6366f1',
+    accent: '#8F72EB',
   },
   {
     title: 'RDLC Auto Header',
-    description: 'Extensión VS Code para automatizar encabezados en informes RDLC.',
+    description: 'Extensión de VS Code que automatiza los encabezados en informes RDLC de Business Central.',
     image: '/rdlc-icon.png',
     status: 'Publicada',
     statusType: 'published',
     link: 'https://marketplace.visualstudio.com/items?itemName=b3325c32-f6ee-4fad-9894-9af09cca5946.rdlc-autoheader',
-    accent: '#0ea5e9',
+    accent: '#E57E89',
   },
 ]
 
@@ -85,24 +94,34 @@ function useCardSpacing() {
 
 function getVariant(offset: number, spacing: number, rotate: number) {
   if (offset === 0) {
-    return { x: 0, rotateY: 0, scale: 1, opacity: 1, zIndex: 10, filter: 'blur(0px) brightness(1)' }
+    return { x: 0, z: 0, rotateY: 0, scale: 1, opacity: 1, zIndex: 10 }
   }
   const dir = offset > 0 ? 1 : -1
   const abs = Math.abs(offset)
-  // Neighbours tuck in close behind the centre card; further ones shrink and
-  // fade into the background so the whole thing reads as one compact stack.
-  const x = dir * (spacing + (abs - 1) * 46)
-  const scale = abs === 1 ? 0.82 : 0.64
-  const opacity = abs === 1 ? 0.8 : 0.4
-  const blur = abs === 1 ? 2 : 5
-  const brightness = abs === 1 ? 0.92 : 0.8
+
+  // Solo se ven las dos tarjetas contiguas. Las demás esperan fuera, apagadas:
+  // con cinco proyectos, dibujar también las de offset 2 las amontonaba encima
+  // de las de offset 1 y los títulos se pisaban.
+  if (abs > 1) {
+    return {
+      x: dir * (spacing + 220),
+      z: -420,
+      rotateY: -dir * rotate,
+      scale: 0.62,
+      opacity: 0,
+      zIndex: 1,
+    }
+  }
+
+  // La contigua se abre en abanico y retrocede en profundidad para formar el
+  // arco del coverflow. Sin desenfoque: se mantiene nítida y legible.
   return {
-    x,
+    x: dir * spacing,
+    z: -150,
     rotateY: -dir * rotate,
-    scale,
-    opacity,
-    zIndex: 10 - abs,
-    filter: `blur(${blur}px) brightness(${brightness})`,
+    scale: 0.84,
+    opacity: 0.92,
+    zIndex: 9,
   }
 }
 
@@ -165,7 +184,7 @@ export default function ProjectCarousel3D() {
                 className={`coverflow-card${isCenter ? ' active' : ''}`}
                 initial={false}
                 animate={variant}
-                transition={{ type: 'spring', stiffness: 60, damping: 18, mass: 1 }}
+                transition={{ type: 'spring', stiffness: 210, damping: 26, mass: 0.9 }}
                 whileHover={isCenter ? { y: -12, scale: 1.035 } : { scale: 0.88, opacity: 0.95 }}
                 style={{ transformStyle: 'preserve-3d' }}
                 onClick={(e) => {
@@ -233,7 +252,7 @@ export default function ProjectCarousel3D() {
               onClick={() => goTo(i)}
               animate={{
                 width: active === i ? 28 : 10,
-                background: active === i ? current.accent : 'rgba(0,0,0,0.14)',
+                background: active === i ? current.accent : 'rgba(255,255,255,0.22)',
               }}
               transition={{ duration: 0.35, ease: 'easeInOut' }}
               aria-label={`Ir a ${projects[i].title}`}
