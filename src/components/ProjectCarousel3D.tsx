@@ -6,50 +6,24 @@ import { motion, PanInfo } from 'framer-motion'
 interface Project {
   title: string
   description: string
-  image: string
+  /** Si falta, se dibuja una pastilla con la inicial: aún no tiene icono propio. */
+  image?: string
+  /** Letra de esa pastilla. Por defecto, la inicial del título. */
+  initial?: string
   status: string
-  statusType: 'live' | 'published'
-  link: string
+  statusType: 'beta' | 'published' | 'soon'
+  /** Sin enlace, la tarjeta no se puede abrir: todavía no hay nada que descargar. */
+  link?: string
   accent: string
 }
 
+/**
+ * Orden: primero lo que ya se puede usar, después lo que está por llegar.
+ * - published: terminado y publicado en su tienda.
+ * - beta: se puede descargar y usar, pero sigue cambiando.
+ * - soon: todavía no hay nada que descargar.
+ */
 const projects: Project[] = [
-  {
-    title: 'VeoVeo',
-    description: 'Descubre pelis, guarda tu lista y decidid en un minuto qué ver juntos.',
-    image: '/veoveo-icon.png',
-    status: 'En vivo',
-    statusType: 'live',
-    link: 'https://veoveo.dripdev.dev/descargar',
-    accent: '#38BDF8',
-  },
-  {
-    title: 'split',
-    description: 'Tus cuentas, gastos, ahorro y pagos programados. Sin registro y sin nube: los datos se quedan en tu móvil.',
-    image: '/split-icon.png',
-    status: 'En vivo',
-    statusType: 'live',
-    link: 'https://github.com/roblesgg/split/releases/latest',
-    accent: '#22C55E',
-  },
-  {
-    title: 'imputa.me',
-    description: 'Registra tus horas por tarea y míralas en un calendario semanal. Vive en la bandeja del sistema.',
-    image: '/imputame-icon.png',
-    status: 'En vivo',
-    statusType: 'live',
-    link: 'https://imputame.dripdev.dev/descargar',
-    accent: '#FB944E',
-  },
-  {
-    title: 'Zona Cliente',
-    description: 'CRM para gestionar hospitales, contactos, empresas y encargos. Web y app Android.',
-    image: '/zonacliente-icon.png',
-    status: 'En vivo',
-    statusType: 'live',
-    link: 'https://zonacliente.dripdev.dev/descargar',
-    accent: '#8F72EB',
-  },
   {
     title: 'RDLC Auto Header',
     description: 'Extensión de VS Code que automatiza los encabezados en informes RDLC de Business Central.',
@@ -58,6 +32,75 @@ const projects: Project[] = [
     statusType: 'published',
     link: 'https://marketplace.visualstudio.com/items?itemName=b3325c32-f6ee-4fad-9894-9af09cca5946.rdlc-autoheader',
     accent: '#E57E89',
+  },
+  {
+    title: 'VeoVeo',
+    description: 'Descubre pelis, guarda tu lista y decidid en un minuto qué ver juntos.',
+    image: '/veoveo-icon.png',
+    status: 'Beta',
+    statusType: 'beta',
+    link: 'https://veoveo.dripdev.dev/descargar',
+    accent: '#38BDF8',
+  },
+  {
+    title: 'split',
+    description: 'Tus cuentas, gastos, ahorro y pagos programados. Sin registro y sin nube: los datos se quedan en tu móvil.',
+    image: '/split-icon.png',
+    status: 'Beta',
+    statusType: 'beta',
+    // TODO: cambiar a https://split.dripdev.dev en cuanto el subdominio responda.
+    link: 'https://github.com/roblesgg/split/releases/latest',
+    accent: '#22C55E',
+  },
+  {
+    title: 'imputa.me',
+    description: 'Registra tus horas por tarea y míralas en un calendario semanal. Vive en la bandeja del sistema.',
+    image: '/imputame-icon.png',
+    status: 'Beta',
+    statusType: 'beta',
+    link: 'https://imputame.dripdev.dev/descargar',
+    accent: '#FB944E',
+  },
+  {
+    title: 'Zona Cliente',
+    description: 'CRM para gestionar hospitales, contactos, empresas y encargos. Web y app Android.',
+    image: '/zonacliente-icon.png',
+    status: 'Beta',
+    statusType: 'beta',
+    link: 'https://zonacliente.dripdev.dev/descargar',
+    accent: '#8F72EB',
+  },
+  {
+    title: 'Pulso',
+    description: 'Tus entrenamientos y tu descanso del reloj, en un sitio que es tuyo. Sesiones, parciales, sueño y evolución.',
+    initial: 'P',
+    status: 'Próximamente',
+    statusType: 'soon',
+    accent: '#F43F5E',
+  },
+  {
+    title: 'DripGarage',
+    description: 'Tu garaje en el móvil: vehículos, mantenimientos y el calendario de lo que toca.',
+    initial: 'G',
+    status: 'Próximamente',
+    statusType: 'soon',
+    accent: '#FDB65C',
+  },
+  {
+    title: 'CiTattoo',
+    description: 'Citas de tatuaje con vista de cliente y de profesional, pensada para el móvil.',
+    initial: 'C',
+    status: 'Próximamente',
+    statusType: 'soon',
+    accent: '#7448BE',
+  },
+  {
+    title: 'Copiloto',
+    description: 'Asistente de escritorio para Star Citizen: rutas, precios y qué conviene llevar.',
+    initial: 'Co',
+    status: 'Próximamente',
+    statusType: 'soon',
+    accent: '#38BDF8',
   },
 ]
 
@@ -179,9 +222,9 @@ export default function ProjectCarousel3D() {
               <motion.a
                 key={project.title}
                 href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`coverflow-card${isCenter ? ' active' : ''}`}
+                target={project.link ? '_blank' : undefined}
+                rel={project.link ? 'noopener noreferrer' : undefined}
+                className={`coverflow-card${isCenter ? ' active' : ''}${project.link ? '' : ' no-link'}`}
                 initial={false}
                 animate={variant}
                 transition={{ type: 'spring', stiffness: 210, damping: 26, mass: 0.9 }}
@@ -192,6 +235,7 @@ export default function ProjectCarousel3D() {
                   // only the active card opens the link.
                   if (dragMoved.current) { e.preventDefault(); return }
                   if (!isCenter) { e.preventDefault(); goTo(index) }
+                  else if (!project.link) e.preventDefault()
                   else markInteraction()
                 }}
               >
@@ -201,8 +245,8 @@ export default function ProjectCarousel3D() {
                   className="lg-tint"
                   style={{
                     background: isCenter
-                      ? `linear-gradient(155deg, ${project.accent}1a 0%, rgba(255,255,255,0.52) 55%)`
-                      : 'rgba(255,255,255,0.48)',
+                      ? `linear-gradient(155deg, ${project.accent}26 0%, rgba(21,18,28,0.80) 58%)`
+                      : 'rgba(21,18,28,0.86)',
                   }}
                 />
                 <div className="lg-shine" />
@@ -212,7 +256,21 @@ export default function ProjectCarousel3D() {
                     className="coverflow-card-visual"
                     style={{ background: `linear-gradient(145deg, ${project.accent}1c 0%, ${project.accent}08 100%)` }}
                   >
-                    <img src={project.image} alt={project.title} className="coverflow-card-img" />
+                    {project.image ? (
+                      <img src={project.image} alt={project.title} className="coverflow-card-img" />
+                    ) : (
+                      <span
+                        className="coverflow-card-initial"
+                        style={{
+                          background: `linear-gradient(145deg, ${project.accent}38 0%, ${project.accent}12 100%)`,
+                          borderColor: `${project.accent}44`,
+                          color: project.accent,
+                        }}
+                        aria-hidden
+                      >
+                        {project.initial ?? project.title[0]}
+                      </span>
+                    )}
                     {isCenter && (
                       <motion.div
                         className="card-icon-glow"
@@ -231,9 +289,15 @@ export default function ProjectCarousel3D() {
                   <div className="coverflow-card-content">
                     <h3 className="coverflow-card-title">{project.title}</h3>
                     <p className="coverflow-card-desc">{project.description}</p>
-                    <span className="coverflow-card-link" style={{ color: project.accent }}>
-                      Ver proyecto <span className="link-arrow">→</span>
-                    </span>
+                    {project.link ? (
+                      <span className="coverflow-card-link" style={{ color: project.accent }}>
+                        Ver proyecto <span className="link-arrow">→</span>
+                      </span>
+                    ) : (
+                      <span className="coverflow-card-link coverflow-card-link-soon">
+                        En desarrollo
+                      </span>
+                    )}
                   </div>
                 </div>
               </motion.a>

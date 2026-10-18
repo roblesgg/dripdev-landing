@@ -46,16 +46,28 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  /* clip, no hidden: con elementos transformados en 3D (el carrusel), hidden
+     deja crecer el documento y en el móvil el contenido se salía por la
+     derecha. clip no crea contenedor de scroll y sí los recorta. */
+  overflow-x: clip;
 }
 
 body {
   background-color: var(--bg);
   color: var(--fg);
   font-family: var(--font-main);
-  overflow-x: hidden;
+  overflow-x: clip;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 ::selection {
@@ -221,6 +233,8 @@ main {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
+  /* % y no vw: vw incluye la barra de desplazamiento y crearía desbordamiento */
+  max-width: calc(100% - 24px);
   z-index: 100;
   /* glass wrapper */
   display: flex;
@@ -920,7 +934,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ── R3F 3D carousel ── */
@@ -1120,17 +1134,52 @@ main {
   z-index: 3;
 }
 
-.badge-live {
+/* Terminada y en su tienda */
+.badge-published {
   background: rgba(74, 222, 128, 0.14);
   color: #7BE8A3;
   border: 1px solid rgba(74, 222, 128, 0.28);
 }
 
-.badge-published {
-  background: rgba(143, 114, 235, 0.16);
-  color: #BBA6FF;
-  border: 1px solid rgba(143, 114, 235, 0.32);
+/* Se puede usar, pero sigue cambiando */
+.badge-beta {
+  background: rgba(251, 148, 78, 0.15);
+  color: #FFC489;
+  border: 1px solid rgba(251, 148, 78, 0.32);
 }
+
+/* Todavía no hay nada que descargar: sin punto que lata, no es una novedad */
+.badge-soon {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.badge-soon .badge-dot { display: none; }
+
+/* Pastilla con la inicial para los que aún no tienen icono propio */
+.coverflow-card-initial {
+  width: 148px;
+  height: 148px;
+  border-radius: 32px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 3.6rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  position: relative;
+  z-index: 2;
+}
+
+.coverflow-card-link-soon {
+  color: var(--fg-secondary);
+  opacity: 0.7;
+}
+
+.coverflow-card.no-link { cursor: default; }
 
 .badge-dot {
   width: 6px;
@@ -1253,7 +1302,8 @@ main {
   .coverflow-stage { height: 490px; perspective: 900px; }
   .coverflow-track, .coverflow-card { width: 300px; height: 420px; }
   .coverflow-card-visual { height: 220px; }
-  .coverflow-card-img { width: 120px; height: 120px; }
+  .coverflow-card-img,
+  .coverflow-card-initial { width: 120px; height: 120px; font-size: 2.9rem; }
   .coverflow-card-content { padding: 22px 26px 26px; }
   .coverflow-card-title { font-size: 1.35rem; }
   .coverflow-card-desc { font-size: 0.85rem; }
@@ -1263,6 +1313,7 @@ main {
   .coverflow-stage { height: 450px; }
   .coverflow-track, .coverflow-card { width: 262px; height: 380px; }
   .coverflow-card-visual { height: 190px; }
-  .coverflow-card-img { width: 100px; height: 100px; }
+  .coverflow-card-img,
+  .coverflow-card-initial { width: 100px; height: 100px; font-size: 2.4rem; }
   .coverflow-card-content { padding: 18px 22px 22px; }
 }
