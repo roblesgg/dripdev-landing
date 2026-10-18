@@ -171,7 +171,7 @@ export default function Home() {
           <AnimatedSection>
             <div className="contact-card">
               <div className="lg-effect" />
-              <div className="lg-tint" style={{ background: 'linear-gradient(155deg, rgba(99,102,241,0.1) 0%, rgba(255,255,255,0.58) 60%)' }} />
+              <div className="lg-tint" style={{ background: 'linear-gradient(155deg, rgba(251,148,78,0.10) 0%, rgba(143,114,235,0.08) 38%, rgba(21,18,28,0.82) 72%)' }} />
               <div className="lg-shine" />
               <div className="contact-card-inner">
                 <div className="contact-avatar">
