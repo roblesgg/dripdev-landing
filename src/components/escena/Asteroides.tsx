@@ -29,10 +29,10 @@ export function Asteroides({ cantidad, estatico }: Props) {
     const material = new THREE.MeshStandardMaterial({
       map: tex,
       bumpMap: tex,
-      bumpScale: 3.2,
-      roughness: 0.93,
-      metalness: 0.05,
-      flatShading: true,
+      bumpScale: 4.5,
+      roughness: 0.9,
+      metalness: 0.08,
+      flatShading: false,
     })
 
     const rnd = mulberry32(20261018)

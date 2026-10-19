@@ -32,6 +32,8 @@ Opcional: define `GITHUB_TOKEN` (solo lectura) para subir el límite de la API d
 
 Next.js 16 y React 19. La portada es una escena 3D con Three.js (React Three Fiber): un cinturón de asteroides por el que viaja la cámara al hacer scroll y el logo hecho de 70.000 partículas. Motion para las animaciones de la página, Phosphor para los iconos y Geist (texto y datos). Tema oscuro fijo. Publicada en Vercel: cada fusión a `main` se despliega sola.
 
+**Cinco diseños de la portada**, intercambiables con el botón "Diseño" (abajo a la derecha), con las teclas 1 a 5 o con `?d=<nombre>`; se recuerda el último elegido. Cada uno es una escena 3D distinta con su propia reacción al scroll: `cinturon` (asteroides), `sistema` (un planeta por proyecto), `metamorfosis` (las partículas se vuelven el icono de cada app), `aurora` (seda de luz) y `olas` (un mar de puntos). En `sistema` y `metamorfosis` la escena sigue a la ficha de proyecto que se está leyendo. Los iconos se convierten en nubes de puntos con `node scripts/generar-formas-puntos.mjs`.
+
 La escena se adapta al dispositivo: en móvil usa menos asteroides y puntos y no aplica postprocesado; con `prefers-reduced-motion` se dibuja una sola vez, sin movimiento; sin WebGL, la página se lee igual sobre un fondo estático. El logo se convierte en nube de puntos con `node scripts/generar-logo-puntos.mjs`.
 
 <details>

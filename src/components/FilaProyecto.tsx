@@ -81,7 +81,7 @@ export function FilaProyecto({ proyecto, version, fechaVersion }: Props) {
 
   if (!enlace) {
     return (
-      <div className="fila sin-enlace" role="listitem">
+      <div id={`proyecto-${proyecto.id}`} className="fila sin-enlace" role="listitem">
         {contenido}
       </div>
     )
@@ -89,6 +89,7 @@ export function FilaProyecto({ proyecto, version, fechaVersion }: Props) {
 
   return (
     <a
+      id={`proyecto-${proyecto.id}`}
       className="fila con-enlace"
       role="listitem"
       href={enlace}

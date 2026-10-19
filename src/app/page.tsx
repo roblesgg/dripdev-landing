@@ -124,7 +124,8 @@ export default async function Home() {
         </section>
 
         <section id="contacto" className="seccion" aria-labelledby="titulo-contacto">
-          <div className="contenedor contacto panel">
+          <div className="contenedor contacto-envoltorio">
+           <div className="contacto panel">
             <Reveal className="persona">
               <img src="/alvaro.jpeg" alt="Álvaro Robles" width={132} height={132} loading="lazy" />
               <p className="persona-nombre">Álvaro Robles González</p>
@@ -153,6 +154,7 @@ export default async function Home() {
                 </a>
               </div>
             </Reveal>
+           </div>
           </div>
         </section>
       </main>

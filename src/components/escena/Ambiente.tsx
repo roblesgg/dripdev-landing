@@ -3,15 +3,32 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { mulberry32 } from './utiles'
+import { crearTexturaPunto, mulberry32 } from './utiles'
 
 /**
  * Cielo: noche tintada de violeta y, muy al fondo del túnel, un sol lejano que sube y baja
  * de intensidad como una brasa. Es una esfera invertida con un degradado: casi gratis.
  */
-export function Cielo() {
+export function Cielo({
+  sol = [0, 0, -1],
+  color = '#ff8f3d',
+  fuerza = 1,
+}: {
+  /** Hacia dónde brilla el sol lejano (no hace falta normalizar). */
+  sol?: [number, number, number]
+  color?: string
+  fuerza?: number
+}) {
   const material = useRef<THREE.ShaderMaterial>(null)
-  const uniformes = useMemo(() => ({ uTime: { value: 0 } }), [])
+  const uniformes = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uSol: { value: new THREE.Vector3(...sol).normalize() },
+      uColor: { value: new THREE.Color(color) },
+      uFuerza: { value: fuerza },
+    }),
+    [sol, color, fuerza],
+  )
 
   useFrame((state) => {
     if (material.current) material.current.uniforms.uTime.value = state.clock.elapsedTime
@@ -35,12 +52,15 @@ export function Cielo() {
         `}
         fragmentShader={/* glsl */ `
           uniform float uTime;
+          uniform vec3 uSol;
+          uniform vec3 uColor;
+          uniform float uFuerza;
           varying vec3 vDir;
           void main() {
             vec3 base = vec3(0.043, 0.035, 0.063);
-            float haciaFondo = max(dot(normalize(vDir), vec3(0.0, 0.0, -1.0)), 0.0);
+            float haciaFondo = max(dot(normalize(vDir), uSol), 0.0);
             float pulso = 0.92 + 0.08 * sin(uTime * 0.6);
-            vec3 sol = vec3(1.0, 0.56, 0.24) * pow(haciaFondo, 34.0) * 1.15 * pulso;
+            vec3 sol = uColor * pow(haciaFondo, 34.0) * 1.15 * pulso * uFuerza;
             vec3 halo = vec3(0.56, 0.45, 0.92) * pow(haciaFondo, 5.0) * 0.14;
             float horizonte = smoothstep(-0.6, 0.9, vDir.y) * 0.025;
             gl_FragColor = vec4(base + sol + halo + horizonte, 1.0);
@@ -52,7 +72,18 @@ export function Cielo() {
 }
 
 /** Polvo incandescente dentro del túnel y estrellas lejanas. */
-export function Polvo({ polvo, estrellas }: { polvo: number; estrellas: number }) {
+export function Polvo({
+  polvo,
+  estrellas,
+  zMin = -130,
+  radio: radioMax = 17,
+}: {
+  polvo: number
+  estrellas: number
+  /** Hasta dónde se extiende el polvo por delante de la cámara. */
+  zMin?: number
+  radio?: number
+}) {
   const grupo = useRef<THREE.Group>(null)
 
   const { posPolvo, colPolvo, posEstrellas } = useMemo(() => {
@@ -62,10 +93,10 @@ export function Polvo({ polvo, estrellas }: { polvo: number; estrellas: number }
     const c = new THREE.Color()
     for (let i = 0; i < polvo; i++) {
       const ang = rnd() * Math.PI * 2
-      const radio = 2 + Math.pow(rnd(), 0.8) * 17
+      const radio = 2 + Math.pow(rnd(), 0.8) * radioMax
       posPolvo[i * 3] = Math.cos(ang) * radio * 1.35
       posPolvo[i * 3 + 1] = Math.sin(ang) * radio * 0.85
-      posPolvo[i * 3 + 2] = -130 + rnd() * 140
+      posPolvo[i * 3 + 2] = zMin + rnd() * (10 - zMin)
       // Brasas: del melocotón al coral, alguna violeta
       const t = rnd()
       if (t < 0.7) c.set('#FDB65C').lerp(new THREE.Color('#FB944E'), rnd())
@@ -83,7 +114,9 @@ export function Polvo({ polvo, estrellas }: { polvo: number; estrellas: number }
       posEstrellas.set([r * s * Math.cos(th), r * u, r * s * Math.sin(th)], i * 3)
     }
     return { posPolvo, colPolvo, posEstrellas }
-  }, [polvo, estrellas])
+  }, [polvo, estrellas, zMin, radioMax])
+
+  const punto = useMemo(() => crearTexturaPunto(), [])
 
   useFrame((state) => {
     if (grupo.current) grupo.current.rotation.z = state.clock.elapsedTime * 0.012
@@ -97,7 +130,8 @@ export function Polvo({ polvo, estrellas }: { polvo: number; estrellas: number }
           <bufferAttribute attach="attributes-color" args={[colPolvo, 3]} />
         </bufferGeometry>
         <pointsMaterial
-          size={0.075}
+          map={punto}
+          size={0.12}
           vertexColors
           transparent
           opacity={0.9}
@@ -112,7 +146,8 @@ export function Polvo({ polvo, estrellas }: { polvo: number; estrellas: number }
           <bufferAttribute attach="attributes-position" args={[posEstrellas, 3]} />
         </bufferGeometry>
         <pointsMaterial
-          size={1.1}
+          map={punto}
+          size={2}
           color="#cfc7e6"
           transparent
           opacity={0.75}

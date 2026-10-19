@@ -77,6 +77,76 @@ html {
 }
 main, .pie { position: relative; z-index: 1; }
 
+/* ── Selector de diseño ── */
+.diseno {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.diseno-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: var(--r);
+  border: 1px solid var(--line-strong);
+  background: rgba(14, 12, 18, 0.88);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.diseno-boton:hover { border-color: rgba(255, 255, 255, 0.34); }
+.diseno-boton:active { transform: scale(0.98); }
+.diseno-boton svg { color: var(--accent); }
+.diseno-boton .girado { transform: rotate(180deg); }
+.diseno-nombre { display: flex; flex-direction: column; align-items: flex-start; font-weight: 600; font-size: 0.92rem; line-height: 1.15; letter-spacing: -0.01em; }
+.diseno-nombre small { font-size: 0.7rem; font-weight: 500; color: var(--faint); letter-spacing: 0; }
+
+.diseno-menu {
+  width: min(330px, calc(100vw - 40px));
+  padding: 6px;
+  border-radius: var(--r);
+  border: 1px solid var(--line-strong);
+  background: rgba(14, 12, 18, 0.94);
+}
+.diseno-opcion {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: var(--r);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s var(--ease);
+}
+.diseno-opcion:hover { background: rgba(255, 255, 255, 0.06); }
+.diseno-opcion.activa { background: rgba(251, 148, 78, 0.12); }
+.diseno-tecla { color: var(--faint); font-size: 0.78rem; }
+.diseno-opcion.activa .diseno-tecla { color: var(--accent); }
+.diseno-texto { display: flex; flex-direction: column; min-width: 0; }
+.diseno-texto strong { font-weight: 600; font-size: 0.93rem; letter-spacing: -0.01em; }
+.diseno-texto small { color: var(--muted); font-size: 0.78rem; }
+.diseno-tono { font-size: 0.68rem; color: var(--faint); }
+
+@media (max-width: 767px) {
+  .diseno { right: 14px; bottom: 14px; }
+  .diseno-tono { display: none; }
+  .diseno-opcion { grid-template-columns: 22px 1fr; }
+}
+
 body {
   background: #0b0910;
   color: var(--text);
@@ -239,6 +309,21 @@ ul { list-style: none; }
 }
 .seccion-titulo, .seccion-intro { text-shadow: 0 2px 20px rgba(11, 9, 16, 0.9); }
 
+/* En escritorio el contenido es una columna a la izquierda y la escena se ve entera a la derecha */
+@media (min-width: 1024px) {
+  .panel { max-width: 660px; background: rgba(14, 12, 18, 0.78); }
+  .seccion-intro { max-width: 48ch; }
+  .stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .actividad-envoltorio { max-width: 660px; }
+  .contacto-envoltorio .contacto { max-width: 760px; grid-template-columns: 1fr; gap: 28px; }
+}
+/* En móvil no hay una mitad libre: el panel deja ver la escena a través, sin desenfoque
+   (el desenfoque sobre un canvas WebGL da tirones en móviles) */
+@media (max-width: 1023px) {
+  .panel { background: rgba(14, 12, 18, 0.58); }
+  .fila-descripcion, .fila-nombre { text-shadow: 0 1px 12px rgba(11, 9, 16, 0.95); }
+}
+
 .hero-rejilla {
   display: grid;
   gap: 56px;
@@ -392,7 +477,8 @@ ul { list-style: none; }
 }
 .fila.con-enlace:hover .fila-flecha { transform: translate(3px, -3px); color: var(--accent); }
 
-@media (min-width: 900px) {
+/* Solo en pantallas muy anchas la ficha pone los datos a la derecha: antes, apilados */
+@media (min-width: 2000px) {
   .fila { grid-template-columns: 48px minmax(0, 1fr) auto; padding: 18px 20px; }
   .fila.con-enlace, .fila.sin-enlace { padding-right: 20px; }
   .fila-meta { grid-column: 3; grid-row: 1 / span 2; margin-top: 0; justify-content: flex-end; text-align: right; padding-right: 32px; }
