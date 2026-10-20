@@ -6,7 +6,7 @@ import { AndroidLogo, ArrowUpRight, Code, Globe, WindowsLogo } from '@phosphor-i
 import type { ProyectoConDatos } from '@/lib/datos'
 import type { Estado, Plataforma } from '@/lib/proyectos'
 
-/** El color de cada app, el mismo que usa en su propia identidad. */
+/** El color de cada app. Solo se usa como detalle: línea, número y halo del icono. */
 const COLOR: Record<string, string> = {
   rdlc: '#E57E89',
   veoveo: '#38BDF8',
@@ -24,39 +24,73 @@ const PLATAFORMA: Record<Plataforma, { nombre: string; Icono: typeof Globe }> = 
   vscode: { nombre: 'VS Code', Icono: Code },
 }
 
+const SUAVE = [0.16, 1, 0.3, 1] as const
+
 function Pantalla({ d, i }: { d: ProyectoConDatos; i: number }) {
   const reducir = useReducedMotion()
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const giro = useTransform(scrollYProgress, [0, 1], [-14, 10])
-  const sube = useTransform(scrollYProgress, [0, 1], [90, -90])
-  const escala = useTransform(scrollYProgress, [0, 0.35, 1], [0.8, 1, 1])
+  const linea = useTransform(scrollYProgress, [0.05, 0.4], [0, 1])
+  const sube = useTransform(scrollYProgress, [0, 1], [70, -70])
+  const numero = useTransform(scrollYProgress, [0, 1], [120, -120])
+  const aro = useTransform(scrollYProgress, [0, 0.5, 1], [0.7, 1, 1.25])
+  const giro = useTransform(scrollYProgress, [0, 1], [-8, 8])
   const { proyecto: p } = d
+  const acento = COLOR[p.id] ?? '#FB944E'
+  const lado = i % 2 === 1
+
+  const entra = (delay: number) =>
+    reducir
+      ? {}
+      : {
+          initial: { opacity: 0, y: 36 },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: { once: true, margin: '-12% 0px' },
+          transition: { duration: 0.9, delay, ease: SUAVE },
+        }
 
   return (
     <section
       ref={ref}
       id={`proyecto-${p.id}`}
-      className="pl-app"
-      style={{ background: COLOR[p.id] ?? '#FB944E', zIndex: i + 1 }}
+      className={`pl-app${lado ? ' pl-app-inversa' : ''}`}
+      style={{ ['--acento' as string]: acento }}
       aria-labelledby={`pl-${p.id}`}
     >
-      <span className="pl-num mono" aria-hidden>
+      <motion.div className="pl-app-linea" style={reducir ? undefined : { scaleX: linea }} aria-hidden />
+      <motion.span className="pl-num mono" style={reducir ? undefined : { y: numero }} aria-hidden>
         {String(i + 1).padStart(2, '0')}
-      </span>
+      </motion.span>
       <div className="pl-contenedor pl-app-rejilla">
         <div className="pl-app-texto">
-          <span className={`pl-estado pl-estado-${p.estado}`}>{ESTADO[p.estado]}</span>
+          <motion.span className={`pl-estado pl-estado-${p.estado}`} {...entra(0)}>
+            {ESTADO[p.estado]}
+          </motion.span>
           <h2 id={`pl-${p.id}`} className="pl-app-nombre">
-            {p.nombre}
+            <motion.span
+              className="pl-mascara"
+              initial={reducir ? false : 'oculto'}
+              whileInView="visto"
+              viewport={{ once: true, margin: '-12% 0px' }}
+            >
+              <motion.span
+                className="pl-palabra"
+                variants={{ oculto: { y: '112%' }, visto: { y: 0 } }}
+                transition={{ duration: 1, ease: SUAVE }}
+              >
+                {p.nombre}
+              </motion.span>
+            </motion.span>
           </h2>
-          <p className="pl-app-desc">{p.descripcion}</p>
-          <ul className="pl-app-meta mono">
+          <motion.p className="pl-app-desc" {...entra(0.12)}>
+            {p.descripcion}
+          </motion.p>
+          <motion.ul className="pl-app-meta mono" {...entra(0.2)}>
             {p.plataformas.map((pl) => {
               const { nombre, Icono } = PLATAFORMA[pl]
               return (
                 <li key={pl}>
-                  <Icono size={16} weight="bold" aria-hidden />
+                  <Icono size={15} weight="bold" aria-hidden />
                   {nombre}
                 </li>
               )
@@ -64,26 +98,31 @@ function Pantalla({ d, i }: { d: ProyectoConDatos; i: number }) {
             {d.version && (
               <li title="Última versión publicada">
                 {d.version}
-                {d.fechaVersion && ` ${d.fechaVersion}`}
+                {d.fechaVersion && ` · ${d.fechaVersion}`}
               </li>
             )}
-          </ul>
+          </motion.ul>
           {p.enlace && (
-            <a className="pl-boton pl-boton-tinta" href={p.enlace} target="_blank" rel="noopener noreferrer">
-              Abrir {p.nombre}
-              <ArrowUpRight size={18} weight="bold" aria-hidden />
-            </a>
+            <motion.div {...entra(0.28)}>
+              <a className="pl-boton" href={p.enlace} target="_blank" rel="noopener noreferrer">
+                Abrir {p.nombre}
+                <ArrowUpRight size={18} weight="bold" aria-hidden />
+              </a>
+            </motion.div>
           )}
         </div>
-        <motion.div className="pl-app-icono" style={reducir ? undefined : { rotate: giro, y: sube, scale: escala }}>
-          {p.icono && <img src={p.icono} alt={`Icono de ${p.nombre}`} width={420} height={420} loading="lazy" />}
-        </motion.div>
+        <div className="pl-app-visual" aria-hidden={!p.icono}>
+          <motion.span className="pl-app-aro" style={reducir ? undefined : { scale: aro }} />
+          <motion.span className="pl-app-aro pl-app-aro-2" style={reducir ? undefined : { scale: aro }} />
+          <motion.div className="pl-app-icono" style={reducir ? undefined : { y: sube, rotate: giro }}>
+            {p.icono && <img src={p.icono} alt={`Icono de ${p.nombre}`} width={420} height={420} loading="lazy" />}
+          </motion.div>
+        </div>
       </div>
     </section>
   )
 }
 
-/** Cada app ocupa una pantalla de su color; al bajar, la siguiente sube y tapa a la anterior. */
 export function Apps({ apps }: { apps: ProyectoConDatos[] }) {
   return (
     <div id="apps" className="pl-pila">

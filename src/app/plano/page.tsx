@@ -3,6 +3,9 @@ import { ArrowUpRight, GithubLogo, LinkedinLogo } from '@phosphor-icons/react/di
 import { Hero } from '@/components/plano/Hero'
 import { Cinta } from '@/components/plano/Cinta'
 import { Apps } from '@/components/plano/Apps'
+import { Nav } from '@/components/plano/Nav'
+import { Estrellas } from '@/components/plano/Estrellas'
+import { Manifiesto } from '@/components/plano/Manifiesto'
 import { Reveal } from '@/components/Reveal'
 import { fechaCorta } from '@/lib/github'
 import { cargarDatos } from '@/lib/datos'
@@ -26,33 +29,27 @@ export default async function Plano() {
 
   return (
     <div className="pl">
-      <header className="pl-nav">
-        <div className="pl-contenedor pl-nav-dentro">
-          <a href="#" className="pl-marca" aria-label="DripDev, inicio">DripDev</a>
-          <nav aria-label="Principal" className="pl-nav-lista">
-            <a href="#apps">Proyectos</a>
-            <a href="#stack">Stack</a>
-            <a href="#contacto" className="pl-nav-boton">Escríbeme</a>
-          </nav>
-        </div>
-      </header>
+      <Estrellas />
+      <Nav />
 
       <main>
         <Hero />
         <Cinta nombres={lista.map((d) => d.proyecto.nombre)} />
+        <Manifiesto />
         <Apps apps={apps} />
 
-        <section id="proximamente" className="pl-seccion pl-papel" aria-labelledby="pl-prox">
+        <section id="proximamente" className="pl-seccion" aria-labelledby="pl-prox">
           <div className="pl-contenedor">
             <Reveal>
+              <p className="pl-etiqueta mono">En camino</p>
               <h2 id="pl-prox" className="pl-titulo">Próximamente</h2>
               <p className="pl-intro">Todavía no hay nada que descargar de estos cuatro.</p>
             </Reveal>
             <div className="pl-prox-rejilla">
               {proximas.map(({ proyecto: p }, i) => (
                 <Reveal key={p.id} delay={i * 0.07}>
-                  <article className={`pl-prox pl-prox-${i % 4}`}>
-                    <span className="pl-prox-inicial" aria-hidden>{p.inicial}</span>
+                  <article className="pl-prox">
+                    <span className="pl-prox-inicial mono" aria-hidden>{String(i + 1).padStart(2, '0')}</span>
                     <h3>{p.nombre}</h3>
                     <p>{p.descripcion}</p>
                   </article>
@@ -63,9 +60,10 @@ export default async function Plano() {
         </section>
 
         {hayActividad && (
-          <section id="actividad" className="pl-seccion pl-tinta" aria-labelledby="pl-act">
+          <section id="actividad" className="pl-seccion" aria-labelledby="pl-act">
             <div className="pl-contenedor">
               <Reveal>
+                <p className="pl-etiqueta mono">Actividad</p>
                 <h2 id="pl-act" className="pl-titulo">Lo último que he hecho</h2>
                 <p className="pl-intro">Commits reales de mis repositorios públicos, tal como salen de GitHub.</p>
               </Reveal>
@@ -85,9 +83,10 @@ export default async function Plano() {
           </section>
         )}
 
-        <section id="stack" className="pl-seccion pl-naranja" aria-labelledby="pl-stack">
+        <section id="stack" className="pl-seccion" aria-labelledby="pl-stack">
           <div className="pl-contenedor">
             <Reveal>
+              <p className="pl-etiqueta mono">Herramientas</p>
               <h2 id="pl-stack" className="pl-titulo">Con qué lo construyo</h2>
             </Reveal>
             <div className="pl-stack">
@@ -103,9 +102,10 @@ export default async function Plano() {
           </div>
         </section>
 
-        <section id="contacto" className="pl-seccion pl-melocoton" aria-labelledby="pl-contacto">
+        <section id="contacto" className="pl-seccion" aria-labelledby="pl-contacto">
           <div className="pl-contenedor pl-contacto">
             <Reveal>
+              <p className="pl-etiqueta mono">Contacto</p>
               <h2 id="pl-contacto" className="pl-titulo pl-titulo-enorme">Escríbeme</h2>
               <p className="pl-intro">
                 Soy Álvaro, de Murcia. Desarrollo y mantengo estos proyectos por mi cuenta. Si tienes una idea, has
@@ -113,12 +113,12 @@ export default async function Plano() {
               </p>
               <a className="pl-correo" href={`mailto:${CORREO}`}>{CORREO}</a>
               <div className="pl-acciones">
-                <a className="pl-boton pl-boton-tinta" href="https://github.com/roblesgg" target="_blank" rel="noopener noreferrer">
+                <a className="pl-boton" href="https://github.com/roblesgg" target="_blank" rel="noopener noreferrer">
                   <GithubLogo size={18} weight="bold" aria-hidden />
                   GitHub
                 </a>
                 <a
-                  className="pl-boton pl-boton-tinta"
+                  className="pl-boton pl-boton-borde"
                   href="https://www.linkedin.com/in/%C3%A1lvaro-robles-gonz%C3%A1lez-bbb017240/"
                   target="_blank"
                   rel="noopener noreferrer"

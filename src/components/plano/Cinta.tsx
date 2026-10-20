@@ -34,7 +34,7 @@ export function Cinta({ nombres }: { nombres: string[] }) {
 
   useAnimationFrame((_, dt) => {
     if (reducir) return
-    let mueve = direccion.current * 1.6 * (dt / 1000)
+    let mueve = direccion.current * 2.6 * (dt / 1000)
     const f = factor.get()
     if (f < 0) direccion.current = -1
     else if (f > 0) direccion.current = 1
