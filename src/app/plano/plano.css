@@ -1,0 +1,267 @@
+/*
+ * DripDev · diseño plano
+ *
+ * Reglas del sistema:
+ *  - Solo colores sólidos de la marca. Ningún degradado, sombra ni desenfoque.
+ *  - Texto siempre en tinta o en papel, nunca gris sobre color.
+ *  - Formas: botones y etiquetas son píldoras; tarjetas y fotos, 28px. Nada más.
+ *  - Titulares enormes, Geist 800, interletrado muy cerrado.
+ */
+
+.pl {
+  --papel: #f7f5f2;
+  --tinta: #121016;
+  --naranja: #fb944e;
+  --violeta: #8f72ee;
+  --coral: #e57e89;
+  --melo: #fdb65c;
+  --celeste: #38bdf8;
+  --menta: #2dd4bf;
+  --r: 28px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: clip;
+}
+
+/* Plano de verdad: sin el grano global */
+body:has(.pl)::after { display: none; }
+body:has(.pl) { background: #f7f5f2; }
+
+.pl *, .pl *::before, .pl *::after { text-shadow: none; }
+.pl a { color: inherit; text-decoration: none; }
+.pl ul { list-style: none; }
+.pl :focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; border-radius: 12px; }
+
+.pl-contenedor {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 56px);
+}
+
+/* ── Botones ── */
+.pl-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), background 0.25s var(--ease), color 0.25s var(--ease);
+}
+.pl-boton:active { transform: scale(0.97); }
+/* .pl a { color: inherit } es más específica que .pl-boton-tinta: sin esto el texto salía negro sobre negro */
+.pl .pl-boton-tinta { background: var(--tinta); color: var(--papel); }
+.pl .pl-boton-tinta:hover { transform: translateY(-3px) rotate(-1deg); }
+.pl-enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-bottom: 3px solid var(--tinta);
+  padding-bottom: 2px;
+  transition: gap 0.25s var(--ease);
+}
+.pl-enlace:hover { gap: 14px; }
+
+/* ── Navegación ── */
+.pl-nav { position: absolute; inset: 0 0 auto 0; z-index: 30; }
+.pl-nav-dentro { height: 84px; display: flex; align-items: center; justify-content: space-between; }
+.pl-marca { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.05em; }
+.pl-nav-lista { display: flex; align-items: center; gap: clamp(14px, 3vw, 32px); font-weight: 600; font-size: 0.98rem; }
+.pl-nav-boton { padding: 10px 20px; border-radius: 999px; background: var(--tinta); color: var(--papel) !important; }
+@media (max-width: 520px) {
+  .pl-nav-lista a:nth-child(2) { display: none; }
+  .pl-nav-lista { gap: 12px; }
+  .pl-marca { margin-right: 8px; }
+}
+
+/* ── Hero ── */
+.pl-hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-end;
+  padding: 120px 0 clamp(36px, 6vh, 72px);
+  background: var(--naranja);
+  overflow: hidden;
+}
+.pl-forma { position: absolute; z-index: 0; will-change: transform; }
+.pl-circulo { right: -9vw; bottom: -14vw; width: 40vw; height: 40vw; border-radius: 50%; background: var(--violeta); }
+.pl-bloque { left: 5vw; top: 18%; width: 8vw; height: 8vw; border-radius: 22%; background: var(--melo); }
+.pl-medio { left: 38%; top: 33%; width: 14vw; height: 7vw; border-radius: 14vw 14vw 0 0; background: var(--coral); }
+.pl-forma-chispa { position: absolute; z-index: 0; right: 9%; bottom: 40%; will-change: transform; }
+.pl-chispa { width: clamp(60px, 9vw, 140px); color: var(--tinta); display: block; }
+
+/* El rótulo va arriba a la derecha, recortado a su tamaño real: nunca pisa el titular */
+.pl-hero-pegatina {
+  position: absolute;
+  z-index: 1;
+  right: clamp(8px, 3vw, 52px);
+  top: clamp(88px, 13vh, 140px);
+  width: clamp(300px, 52vw, 860px);
+  pointer-events: none;
+}
+.pl-hero-pegatina img { width: 100%; height: auto; display: block; transform-style: preserve-3d; }
+
+.pl-hero-texto { position: relative; z-index: 2; }
+.pl-h1 {
+  font-size: clamp(3.5rem, 9.4vw, 9rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  max-width: 9.6ch;
+}
+.pl-mascara { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-right: 0.2em; }
+.pl-palabra { display: inline-block; }
+.pl-sub { margin-top: clamp(18px, 3vh, 32px); max-width: 38ch; font-size: clamp(1.05rem, 1.6vw, 1.35rem); font-weight: 500; line-height: 1.4; text-wrap: balance; }
+.pl-acciones { margin-top: clamp(20px, 3.5vh, 36px); display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
+
+/* ── Cinta ── */
+.pl-cinta { background: var(--tinta); color: var(--papel); overflow: hidden; padding: clamp(18px, 3vw, 36px) 0; position: relative; z-index: 5; }
+.pl-cinta-pista { display: flex; width: max-content; will-change: transform; }
+.pl-cinta-grupo { display: flex; flex-shrink: 0; }
+.pl-cinta-nombre { display: inline-flex; align-items: center; gap: clamp(20px, 3vw, 44px); padding-right: clamp(20px, 3vw, 44px); font-size: clamp(2.2rem, 6.4vw, 6rem); font-weight: 800; letter-spacing: -0.05em; white-space: nowrap; }
+.pl-cinta-punto { width: 0.32em; height: 0.32em; border-radius: 50%; background: var(--naranja); flex-shrink: 0; }
+
+/* ── Pantallas de apps: cartas apiladas ── */
+.pl-pila { position: relative; }
+.pl-app {
+  position: sticky;
+  top: 0;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(72px, 10vh, 120px) 0;
+}
+.pl-num {
+  position: absolute;
+  right: clamp(12px, 3vw, 44px);
+  bottom: -0.18em;
+  font-size: clamp(9rem, 30vw, 30rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  color: var(--tinta);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.pl-app-rejilla { position: relative; display: grid; gap: 40px; align-items: center; }
+@media (min-width: 900px) { .pl-app-rejilla { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+
+.pl-estado {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+.pl-estado-publicada { background: var(--tinta); color: var(--papel); }
+.pl-estado-beta { background: var(--papel); color: var(--tinta); }
+.pl-estado-proximamente { border: 2px solid var(--tinta); }
+
+.pl-app-nombre {
+  margin-top: 18px;
+  font-size: clamp(3.4rem, 11.4vw, 11rem);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.065em;
+  overflow-wrap: anywhere;
+}
+.pl-app-desc { margin-top: clamp(16px, 2.6vh, 28px); max-width: 34ch; font-size: clamp(1.1rem, 1.7vw, 1.45rem); font-weight: 500; line-height: 1.38; }
+.pl-app-meta { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 0.86rem; font-weight: 600; }
+.pl-app-meta li { display: inline-flex; align-items: center; gap: 7px; }
+.pl-app-texto .pl-boton { margin-top: 28px; }
+
+.pl-app-icono { display: flex; justify-content: center; will-change: transform; }
+.pl-app-icono img {
+  width: clamp(190px, 30vw, 400px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 22%;
+  border: clamp(8px, 1vw, 14px) solid var(--papel);
+  background: var(--papel);
+}
+
+/* En móvil no se apilan: una sección más alta que la pantalla se quedaría cortada */
+@media (max-width: 767px) {
+  .pl-app { position: relative; min-height: auto; padding: 72px 0 64px; }
+  .pl-app-icono { order: -1; justify-content: flex-start; }
+  .pl-app-icono img { width: 150px; }
+}
+
+/* ── Secciones sueltas ── */
+.pl-seccion { position: relative; z-index: 6; padding: clamp(72px, 12vh, 150px) 0; }
+.pl-papel { background: var(--papel); }
+.pl-tinta { background: var(--tinta); color: var(--papel); }
+.pl-naranja { background: var(--naranja); }
+.pl-melocoton { background: var(--melo); }
+.pl-titulo { font-size: clamp(2.6rem, 8vw, 7.4rem); font-weight: 800; line-height: 0.92; letter-spacing: -0.06em; max-width: 14ch; }
+.pl-titulo-enorme { font-size: clamp(3.4rem, 9.2vw, 9.4rem); max-width: none; }
+.pl-intro { margin-top: 22px; max-width: 46ch; font-size: clamp(1.05rem, 1.5vw, 1.3rem); font-weight: 500; line-height: 1.45; }
+
+/* Próximamente */
+.pl-prox-rejilla { margin-top: clamp(32px, 6vh, 64px); display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 700px) { .pl-prox-rejilla { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .pl-prox-rejilla { grid-template-columns: repeat(4, 1fr); } }
+.pl-prox { height: 100%; padding: 28px; border-radius: var(--r); transition: transform 0.4s var(--ease); }
+.pl-prox:hover { transform: rotate(-2deg) translateY(-6px); }
+.pl-prox-0 { background: var(--coral); }
+.pl-prox-1 { background: var(--melo); }
+.pl-prox-2 { background: var(--celeste); }
+.pl-prox-3 { background: var(--menta); }
+.pl-prox-inicial { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--papel); font-size: 1.7rem; font-weight: 800; letter-spacing: -0.04em; }
+.pl-prox h3 { margin-top: 28px; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.045em; }
+.pl-prox p { margin-top: 10px; font-weight: 500; line-height: 1.4; }
+
+/* Actividad */
+.pl-commits { margin-top: clamp(28px, 5vh, 56px); border-top: 2px solid var(--papel); }
+.pl-commits li { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto auto; gap: 8px 24px; align-items: baseline; padding: 20px 0; border-bottom: 2px solid rgba(247, 245, 242, 0.22); font-size: clamp(0.82rem, 1.1vw, 1rem); }
+.pl-sha { color: var(--naranja); font-weight: 700; }
+.pl-msg { font-weight: 600; overflow-wrap: anywhere; }
+.pl-repo, .pl-commits time { opacity: 0.7; white-space: nowrap; }
+@media (max-width: 767px) {
+  .pl-commits li { grid-template-columns: 70px minmax(0, 1fr); }
+  .pl-repo, .pl-commits time { grid-column: 2; }
+}
+
+/* Stack */
+.pl-stack { margin-top: clamp(32px, 6vh, 64px); display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .pl-stack { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .pl-stack { grid-template-columns: repeat(4, 1fr); } }
+.pl-stack-bloque { height: 100%; padding: 24px; border-radius: var(--r); background: var(--papel); }
+.pl-stack-bloque h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; }
+.pl-stack-bloque p { margin-top: 8px; font-weight: 500; line-height: 1.4; }
+
+/* Contacto */
+.pl-contacto { display: grid; gap: 48px; align-items: end; }
+@media (min-width: 900px) { .pl-contacto { grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.8fr); } }
+.pl-correo { display: inline-block; margin-top: 30px; font-size: clamp(1.5rem, 4.4vw, 3.6rem); font-weight: 800; letter-spacing: -0.05em; border-bottom: 5px solid var(--tinta); word-break: break-word; transition: transform 0.3s var(--ease); }
+.pl-correo:hover { transform: translateX(8px); }
+.pl-contacto .pl-acciones { margin-top: 32px; }
+.pl-foto { transform: rotate(3deg); max-width: 340px; }
+.pl-foto img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: var(--r); border: 12px solid var(--papel); background: var(--papel); }
+.pl-foto p { margin-top: 18px; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.04em; }
+.pl-foto small { font-size: 0.95rem; font-weight: 500; }
+
+/* Pie */
+.pl-pie { position: relative; z-index: 6; background: var(--tinta); color: var(--papel); padding: 28px 0 36px; font-size: 0.92rem; font-weight: 500; }
+.pl-pie-dentro { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; }
+.pl-pie a { display: inline-flex; align-items: center; gap: 6px; border-bottom: 2px solid var(--naranja); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pl *, .pl *::before, .pl *::after { transition-duration: 0.01ms !important; animation: none !important; }
+}

@@ -142,6 +142,12 @@ export function Escena() {
               ))}
             </ul>
           )}
+          {abierto && (
+            <a className="diseno-plano" href="/plano">
+              Diseño plano, sin 3D
+              <span className="mono">nuevo</span>
+            </a>
+          )}
           <button
             className="diseno-boton"
             aria-haspopup="menu"
